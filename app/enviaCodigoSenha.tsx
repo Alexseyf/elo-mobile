@@ -1,13 +1,16 @@
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Alert } from "react-native";
-import { Link, router } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useRouter } from "expo-router";
 
 export default function Index() {
-  const [email, setEmail] = useState();
+  const { email } = useLocalSearchParams();
   const [code, setCode] = useState('');
+  const [senha, setSenha] = useState('');
+  const router = useRouter();
 
-  const handleLogin = async () => {
+  const handlePassword = async () => {
     try {
     const response = await fetch('https://backend-projeto-integrador-eta.vercel.app/valida-senha', {
       method: 'POST',
@@ -16,14 +19,16 @@ export default function Index() {
       },
       body: JSON.stringify({
         email: email,
-        code: code
+        code: code,
+        novaSenha: senha
       }),
     });
 
       if (response.status === 200) {
         console.log('Senha alterada com secesso!');
-      } else if (response.status === 404) {
-        Alert.alert('Erro', 'Email não encontrado');     
+        router.push('./login');
+      } else if (response.status === 400) { 
+        console.log('Erro', 'Email não encontrado');     
       }
     } catch (error) {
       console.log('Erro', 'Erro ao conectar com o servidor');
@@ -50,9 +55,17 @@ export default function Index() {
             value={code}
             onChangeText={setCode}
           />
+          <TextInput
+            style={styles.input}
+            placeholder="Digite a nova senha"
+            keyboardType="visible-password"
+            placeholderTextColor="#666"
+            value={senha}
+            onChangeText={setSenha}
+          />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={handlePassword}>
           <Text style={styles.buttonText}>Enviar</Text>
         </TouchableOpacity>
       </View>
@@ -97,20 +110,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#e1e1e1",
-    textAlign: "center",
-    marginBottom: 30,
-  },
   inputContainer: {
     marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    color: "#fff",
-    marginBottom: 8,
-    fontWeight: "500",
   },
   input: {
     height: 50,
@@ -133,17 +134,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
-  },
-  forgotPassword: {
-    marginTop: 15,
-    width: "100%",
-    textAlign: "center",
-  },
-  forgotPasswordText: {
-    color: "#e1e1e1",
-    fontSize: 14,
-    textDecorationLine: "underline",
-    textAlign: "center",
   },
   logo: {
     width: 200,

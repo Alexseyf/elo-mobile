@@ -21,9 +21,7 @@ export default function Index() {
       });
 
       if (response.status === 200) {
-        console.log('Logado');
         const data = await response.json();
-        console.log(data);
         if (data.usuarioTipo === 'ADMIN') {
           router.push('../users/adminDash');
         } else if (data.usuarioTipo === 'RESPONSAVEL') {
@@ -31,7 +29,7 @@ export default function Index() {
         } else if (data.usuarioTipo === 'PROFESSOR') {
           router.push('/users/profDash');
         } else {
-          Alert.alert('Erro', 'Tipo de usuário desconhecido');
+          console.log('Erro', 'Tipo de usuário inválido');
         }
       } else {
         console.log('Não foi possível logar');

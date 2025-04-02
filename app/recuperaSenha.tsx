@@ -2,11 +2,13 @@ import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Alert } fro
 import { Link, router } from "expo-router";
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useRouter } from "expo-router";
 
 export default function Index() {
   const [email, setEmail] = useState('');
+  const router = useRouter();
 
-  const handleLogin = async () => {
+  const handleEmail = async () => {
     try {
     const response = await fetch('https://backend-projeto-integrador-eta.vercel.app/recupera-senha', {
       method: 'POST',
@@ -19,7 +21,10 @@ export default function Index() {
     });
 
       if (response.status === 200) {
-        router.push('../enviaCodigoSenha');
+        router.push({
+          pathname: '../enviaCodigoSenha',
+          params: { email },
+        });
         console.log('email enviado com sucesso!');
       } else {
         console.log('Usuário não encontrado');
@@ -54,7 +59,7 @@ export default function Index() {
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={handleEmail}>
           <Text style={styles.buttonText}>Enviar</Text>
         </TouchableOpacity>
       </View>
