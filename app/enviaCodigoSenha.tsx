@@ -3,6 +3,7 @@ import { Link, useLocalSearchParams } from "expo-router";
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useRouter } from "expo-router";
+import Toast from "react-native-toast-message";
 
 export default function Index() {
   const { email } = useLocalSearchParams();
@@ -25,13 +26,23 @@ export default function Index() {
     });
 
       if (response.status === 200) {
-        console.log('Senha alterada com secesso!');
+        Toast.show({
+          type: 'success',
+          text1: 'Senha alterada com sucesso!',
+        });
         router.push('./login');
       } else if (response.status === 400) { 
-        console.log('Erro', 'Email não encontrado');     
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao alterar senha',
+          text2: 'Código inválido',
+        });
       }
     } catch (error) {
-      console.log('Erro', 'Erro ao conectar com o servidor');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao conectar com o servidor',
+      });
     }
   };
 
@@ -93,15 +104,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 20,
     marginBottom: 20,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    // borderRadius: 15,
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
   },
   title: {
     fontSize: 24,

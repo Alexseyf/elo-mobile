@@ -3,6 +3,7 @@ import { Link, router } from "expo-router";
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useRouter } from "expo-router";
+import Toast from "react-native-toast-message";
 
 export default function Index() {
   const [email, setEmail] = useState('');
@@ -25,12 +26,22 @@ export default function Index() {
           pathname: '../enviaCodigoSenha',
           params: { email },
         });
-        console.log('email enviado com sucesso!');
+        Toast.show({
+          type: 'success',
+          text1: 'Email enviado com sucesso!',
+        });
       } else {
-        console.log('Usuário não encontrado');
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao enviar email',
+          text2: 'Usuário não encontrado',
+        });
       }
     } catch (error) {
-      console.log('Erro', 'Erro ao conectar com o servidor');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao conectar com o servidor',
+      });
     }
   };
 
@@ -87,15 +98,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 20,
     marginBottom: 20,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   title: {
     fontSize: 24,

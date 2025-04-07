@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "finance",
-    "slug": "finance",
+    "name": "elo-app",
+    "slug": "elo-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

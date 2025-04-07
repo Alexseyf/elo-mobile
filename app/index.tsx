@@ -3,6 +3,7 @@ import { Link } from "expo-router";
 
 export default function Index() {
   return (
+    <>
     <Link href="./login" asChild>
       <TouchableOpacity style={styles.container}>
         <Image 
@@ -12,6 +13,7 @@ export default function Index() {
         />
       </TouchableOpacity>
     </Link>
+    </>
   );
 }
 

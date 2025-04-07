@@ -7,12 +7,27 @@ import { MaterialIcons } from '@expo/vector-icons';
 export default function Index() {
 return (
   <View style={styles.container}>
-    {/* <Link href="./" style={styles.backButton}>
+    <Link href="./" style={styles.backButton}>
       <MaterialIcons name="arrow-back" size={24} color="#fff" />
-    </Link> */}
+    </Link>
     <View style={styles.formContainer}>
-    <Text style={styles.title}>Admin Dashboard</Text>
-    {/* <Link href={"/"}><button style={styles.button}>Home</button></Link> */}
+      <Text style={styles.title}>Admin Dashboard</Text>
+
+      <Link href="../cadastro" style={styles.button}>
+        <Text style={styles.buttonText}>Cadastro</Text>
+      </Link>
+
+      <Link href="../usuarios" style={styles.button}>
+        <Text style={styles.buttonText}>Usuários</Text>
+      </Link>
+
+      <Link href="../turmas" style={styles.button}>
+        <Text style={styles.buttonText}>Turmas</Text>
+      </Link>
+
+      <Link href="../atividades" style={styles.button}>
+        <Text style={styles.buttonText}>Atividades</Text>
+      </Link>
     </View>
   </View>
 );
@@ -38,15 +53,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 20,
     marginBottom: 20,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   title: {
     fontSize: 24,

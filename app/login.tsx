@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Alert } from "react-native";
 import { Link, router } from "expo-router";
-import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
+import Toast from 'react-native-toast-message';
 
 export default function Index() {
   const [email, setEmail] = useState('');
@@ -9,7 +9,7 @@ export default function Index() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('https://backend-projeto-integrador-eta.vercel.app/login', {
+      const response = await fetch("https://backend-projeto-integrador-eta.vercel.app/login", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,7 +20,11 @@ export default function Index() {
         }),
       });
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
+        Toast.show({
+          type: 'success',
+          text1: 'Login realizado com sucesso!',
+        });
         const data = await response.json();
         if (data.usuarioTipo === 'ADMIN') {
           router.push('../users/adminDash');
@@ -29,21 +33,25 @@ export default function Index() {
         } else if (data.usuarioTipo === 'PROFESSOR') {
           router.push('/users/profDash');
         } else {
-          console.log('Erro', 'Tipo de usuário inválido');
+
         }
       } else {
-        console.log('Não foi possível logar');
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao fazer login',
+          text2: 'Usuário ou senha inválidos',
+        });
       }
     } catch (error) {
-      console.log('Erro', 'Erro ao conectar com o servidor');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao conectar com o servidor',
+      });
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* <Link href="./" style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={24} color="#fff" />
-      </Link> */}
       <View style={styles.formContainer}>
       <Image 
           source={require('../assets/images/logo.png')}
@@ -106,18 +114,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 20,
     marginBottom: 20,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
