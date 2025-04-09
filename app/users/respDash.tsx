@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, StatusBar } from "react-native";
 import { Link } from "expo-router";
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -7,6 +7,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 export default function Index() {
 return (
   <View style={styles.container}>
+    <StatusBar hidden />
+    {/* <Link href="./" style={styles.backButton}>
+      <MaterialIcons name="arrow-back" size={24} color="#fff" />
     {/* <Link href="./" style={styles.backButton}>
       <MaterialIcons name="arrow-back" size={24} color="#fff" />
     </Link> */}

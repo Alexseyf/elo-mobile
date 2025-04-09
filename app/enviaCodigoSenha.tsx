@@ -1,59 +1,87 @@
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Alert } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StatusBar,
+} from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
-import { MaterialIcons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { MaterialIcons } from "@expo/vector-icons";
+import { useState } from "react";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 
 export default function Index() {
   const { email } = useLocalSearchParams();
-  const [code, setCode] = useState('');
-  const [senha, setSenha] = useState('');
+  const [code, setCode] = useState("");
+  const [senha, setSenha] = useState("");
   const router = useRouter();
 
   const handlePassword = async () => {
     try {
-    const response = await fetch('https://backend-projeto-integrador-eta.vercel.app/valida-senha', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        code: code,
-        novaSenha: senha
-      }),
-    });
+      const response = await fetch(
+        "https://backend-projeto-integrador-eta.vercel.app/valida-senha",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            code: code,
+            novaSenha: senha,
+          }),
+        }
+      );
+
+      if (code === "") {
+        Toast.show({
+          type: "error",
+          text1: "Campo obrigatório",
+          text2: "Preencha o campo de código",
+        });        return;
+      }
+
+      if (senha === "") {
+        Toast.show({
+          type: "error",
+          text1: "Campo obrigatório",
+          text2: "Preencha a nova senha",
+        });        return;
+      }
 
       if (response.status === 200) {
         Toast.show({
-          type: 'success',
-          text1: 'Senha alterada com sucesso!',
+          type: "success",
+          text1: "Senha alterada com sucesso!",
         });
-        router.push('./login');
-      } else if (response.status === 400) { 
+        router.push("./login");
+      } else if (response.status === 400) {
         Toast.show({
-          type: 'error',
-          text1: 'Erro ao alterar senha',
-          text2: 'Código inválido',
+          type: "error",
+          text1: "Erro ao alterar senha",
+          text2: "Verifique o código e escolha uma senha diferente da utilizada anteriormente",
         });
       }
     } catch (error) {
       Toast.show({
-        type: 'error',
-        text1: 'Erro ao conectar com o servidor',
+        type: "error",
+        text1: "Erro ao conectar com o servidor",
       });
     }
   };
 
   return (
     <View style={styles.container}>
+      <StatusBar hidden />
       <Link href="./login" style={styles.backButton}>
         <MaterialIcons name="arrow-back" size={24} color="#fff" />
       </Link>
       <View style={styles.formContainer}>
-      <Image 
-          source={require('../assets/images/logo.png')}
+        <Image
+          source={require("../assets/images/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -90,7 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2a4674",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 40,
     left: 20,
     zIndex: 1,
@@ -149,7 +177,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginBottom: 10,
   },
 });

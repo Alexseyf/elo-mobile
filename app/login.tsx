@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Alert } from "react-native";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, StatusBar } from "react-native";
 import { Link, router } from "expo-router";
 import { useState } from 'react';
 import Toast from 'react-native-toast-message';
@@ -19,6 +19,7 @@ export default function Index() {
           senha: senha
         }),
       });
+
 
       if (response.status === 200 || response.status === 201) {
         Toast.show({
@@ -52,6 +53,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
+      <StatusBar hidden />
       <View style={styles.formContainer}>
       <Image 
           source={require('../assets/images/logo.png')}

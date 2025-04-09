@@ -1,58 +1,79 @@
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Alert } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StatusBar,
+} from "react-native";
 import { Link, router } from "expo-router";
-import { MaterialIcons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { MaterialIcons } from "@expo/vector-icons";
+import { useState } from "react";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 
 export default function Index() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const router = useRouter();
 
   const handleEmail = async () => {
     try {
-    const response = await fetch('https://backend-projeto-integrador-eta.vercel.app/recupera-senha', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email
-      }),
-    });
+      const response = await fetch(
+        "https://backend-projeto-integrador-eta.vercel.app/recupera-senha",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        }
+      );
+
+      if (email === "") {
+        Toast.show({
+          type: "error",
+          text1: "Campo obrigatório",
+          text2: "Preencha o campo de email",
+        });
+        return;
+      }
 
       if (response.status === 200) {
         router.push({
-          pathname: '../enviaCodigoSenha',
+          pathname: "../enviaCodigoSenha",
           params: { email },
         });
         Toast.show({
-          type: 'success',
-          text1: 'Email enviado com sucesso!',
+          type: "success",
+          text1: "Email enviado com sucesso!",
         });
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Erro ao enviar email',
-          text2: 'Usuário não encontrado',
+          type: "error",
+          text1: "Erro ao enviar email",
+          text2: "Usuário não encontrado",
         });
       }
     } catch (error) {
       Toast.show({
-        type: 'error',
-        text1: 'Erro ao conectar com o servidor',
+        type: "error",
+        text1: "Erro ao conectar com o servidor",
       });
     }
   };
 
   return (
     <View style={styles.container}>
+      <StatusBar hidden />
       <Link href="./login" style={styles.backButton}>
         <MaterialIcons name="arrow-back" size={24} color="#fff" />
       </Link>
       <View style={styles.formContainer}>
-      <Image 
-          source={require('../assets/images/logo.png')}
+        <Image
+          source={require("../assets/images/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -84,7 +105,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2a4674",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 40,
     left: 20,
     zIndex: 1,
@@ -157,7 +178,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginBottom: 10,
   },
 });
