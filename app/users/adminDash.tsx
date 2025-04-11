@@ -27,6 +27,10 @@ export default function Index() {
         <Link href="../atividades" style={styles.button}>
           <Text style={styles.buttonText}>Atividades</Text>
         </Link>
+
+        <Link href="../calendar/calendar" style={styles.button}>
+          <Text style={styles.buttonText}>Calendário</Text>
+        </Link>
       </View>
     </View>
   );
