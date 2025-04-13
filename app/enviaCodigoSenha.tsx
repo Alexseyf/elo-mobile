@@ -1,47 +1,27 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  StatusBar,
-} from "react-native";
-import { Link, useLocalSearchParams } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import { useRouter } from "expo-router";
-import Toast from "react-native-toast-message";
+"use client"
+
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, StatusBar } from "react-native"
+import { Link, useLocalSearchParams } from "expo-router"
+import { MaterialIcons } from "@expo/vector-icons"
+import { useState } from "react"
+import { useRouter } from "expo-router"
+import Toast from "react-native-toast-message"
 
 export default function Index() {
-  const { email } = useLocalSearchParams();
-  const [code, setCode] = useState("");
-  const [senha, setSenha] = useState("");
-  const router = useRouter();
+  const { email } = useLocalSearchParams()
+  const [code, setCode] = useState("")
+  const [senha, setSenha] = useState("")
+  const router = useRouter()
 
   const handlePassword = async () => {
     try {
-      const response = await fetch(
-        "https://backend-projeto-integrador-eta.vercel.app/valida-senha",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-            code: code,
-            novaSenha: senha,
-          }),
-        }
-      );
-
       if (code === "") {
         Toast.show({
           type: "error",
           text1: "Campo obrigatório",
           text2: "Preencha o campo de código",
-        });        return;
+        })
+        return
       }
 
       if (senha === "") {
@@ -49,29 +29,89 @@ export default function Index() {
           type: "error",
           text1: "Campo obrigatório",
           text2: "Preencha a nova senha",
-        });        return;
+        })
+        return
+      }
+
+      const response = await fetch("https://backend-projeto-integrador-eta.vercel.app/valida-senha", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          code: code,
+          novaSenha: senha,
+        }),
+      })
+
+      const responseText = await response.text()
+
+      let data = null
+      let errorMessage = responseText || "Erro desconhecido"
+
+      if (responseText && (responseText.startsWith("{") || responseText.startsWith("["))) {
+        try {
+          data = JSON.parse(responseText)
+
+          if (data && typeof data === "object") {
+            if (data.erro) {
+              errorMessage = data.erro
+            } else if (data.mensagem) {
+              errorMessage = data.mensagem
+            }
+          }
+        } catch (parseError) {
+          errorMessage = "Erro ao processar a resposta do servidor"
+        }
       }
 
       if (response.status === 200) {
         Toast.show({
           type: "success",
           text1: "Senha alterada com sucesso!",
-        });
-        router.push("./login");
+        })
+        router.push("./login")
       } else if (response.status === 400) {
         Toast.show({
           type: "error",
-          text1: "Erro ao alterar senha",
-          text2: "Verifique o código e escolha uma senha diferente da utilizada anteriormente",
-        });
+          text1: "Erro de validação",
+          text2: errorMessage,
+        })
+      } else if (response.status === 404) {
+        Toast.show({
+          type: "error",
+          text1: "Usuário não encontrado",
+          text2: errorMessage,
+        })
+      } else {
+        Toast.show({
+          type: "error",
+          text1: `Erro ${response.status}`,
+          text2: errorMessage,
+        })
       }
     } catch (error) {
+      let errorMessage = "Erro desconhecido"
+
+      if (error instanceof Error) {
+        errorMessage = error.message
+      } else if (typeof error === "string") {
+        errorMessage = error
+      } else if (error && typeof error === "object") {
+        try {
+          errorMessage = JSON.stringify(error)
+        } catch (e) {
+          errorMessage = "Erro ao serializar o objeto de erro"
+        }
+      }
       Toast.show({
         type: "error",
         text1: "Erro ao conectar com o servidor",
-      });
+        text2: errorMessage,
+      })
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -80,11 +120,7 @@ export default function Index() {
         <MaterialIcons name="arrow-back" size={24} color="#fff" />
       </Link>
       <View style={styles.formContainer}>
-        <Image
-          source={require("../assets/images/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Image source={require("../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -101,6 +137,7 @@ export default function Index() {
             placeholderTextColor="#666"
             value={senha}
             onChangeText={setSenha}
+            secureTextEntry={true}
           />
         </View>
 
@@ -109,7 +146,7 @@ export default function Index() {
         </TouchableOpacity>
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -132,15 +169,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 20,
     marginBottom: 20,
-    // borderRadius: 15,
-    // shadowColor: "#000",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-    // elevation: 5,
   },
   title: {
     fontSize: 24,
@@ -180,4 +208,4 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 10,
   },
-});
+})
