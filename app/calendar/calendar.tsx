@@ -1,17 +1,21 @@
 import React from "react";
-import { View, StyleSheet, StatusBar } from "react-native";
-import CalendarComponent from "../components/Calendar";
-import { Link } from "expo-router";
+import { View, StyleSheet, StatusBar, Text, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import CalendarComponent from "../components/Calendar";
+import { router } from "expo-router";
 
 export default function Calendar() {
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <>
       <StatusBar hidden />
       <View style={styles.container}>
-        <Link href="../users/adminDash" style={styles.backButton}>
-          <MaterialIcons name="close" size={24} color="#fff" />
-        </Link>
+        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+        <MaterialIcons name="close" size={20} color="#fff" />
+        </TouchableOpacity>
         <View style={styles.calendarWrapper}>
           <CalendarComponent />
         </View>

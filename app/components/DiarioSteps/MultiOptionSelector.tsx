@@ -21,10 +21,8 @@ const MultiOptionSelector: React.FC<MultiOptionSelectorProps> = ({
   
   const toggleOption = (optionId: string) => {
     if (selectedOptions.includes(optionId)) {
-      // Remove the option if already selected
       onChange(selectedOptions.filter(id => id !== optionId));
     } else {
-      // Add the option if not selected
       onChange([...selectedOptions, optionId]);
     }
   };

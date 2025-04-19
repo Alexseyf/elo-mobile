@@ -9,7 +9,17 @@ export default function Index() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("https://backend-projeto-integrador-eta.vercel.app/login", {
+      if (!email || !senha) {
+        Toast.show({
+          type: 'error',
+          text1: 'Campo obrigatório',
+          text2: 'Preencha todos os campos',
+          visibilityTime: 3000
+        });
+        return;
+      }
+      
+      const response = await fetch("https://elo-api-git-main-alexseyfs-projects.vercel.app/login", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -19,42 +29,66 @@ export default function Index() {
           senha: senha
         }),
       });
-
-      if (!email || !senha) {
-        Toast.show({
-          type: 'error',
-          text1: 'Campo obrigatório',
-          text2: 'Preencha todos os campos',
-        });
-        return;
-      }
       
       if (response.status === 200 || response.status === 201) {
-        Toast.show({
-          type: 'success',
-          text1: 'Login realizado com sucesso!',
-        });
         const data = await response.json();
-        if (data.usuarioTipo === 'ADMIN') {
-          router.push('../users/adminDash');
-        } else if (data.usuarioTipo === 'RESPONSAVEL') {
-          router.push('/users/respDash');
-        } else if (data.usuarioTipo === 'PROFESSOR') {
-          router.push('/users/profDash');
+        
+        console.log('Resposta do login:', JSON.stringify(data));
+        
+        if (data.primeiroAcesso === true) {
+          
+          Toast.show({
+            type: 'info',
+            text1: 'Primeiro acesso',
+            text2: 'É necessário alterar sua senha para continuar',
+            visibilityTime: 3000
+          });
+          
+          router.push({
+            pathname: '/alterarSenhaObrigatoria',
+            params: { userId: data.id, senhaAtual: senha }
+          });
+          return;
+        }
+        
+        if (data.roles && Array.isArray(data.roles)) {
+          if (data.roles.includes('ADMIN')) {
+            router.push('../users/adminDash');
+          } 
+          else if (data.roles.includes('RESPONSAVEL')) {
+            router.push('/users/respDash');
+          } else if (data.roles.includes('PROFESSOR')) {
+            router.push('/users/profDash');
+          } else {
+            Toast.show({
+              type: 'info',
+              text1: 'Sem permissão',
+              text2: 'Usuário sem perfil definido',
+              visibilityTime: 3000
+            });
+          }
         } else {
-
+          Toast.show({
+            type: 'error',
+            text1: 'Erro de perfil',
+            text2: 'Nenhum perfil associado à conta',
+            visibilityTime: 3000
+          });
         }
       } else {
         Toast.show({
           type: 'error',
           text1: 'Erro ao fazer login',
           text2: 'Usuário ou senha inválidos',
+          visibilityTime: 3000
         });
       }
     } catch (error) {
+      console.error('Erro no login:', error);
       Toast.show({
         type: 'error',
         text1: 'Erro ao conectar com o servidor',
+        visibilityTime: 3000
       });
     }
   };
