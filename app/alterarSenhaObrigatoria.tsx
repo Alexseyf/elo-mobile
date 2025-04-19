@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Toast from 'react-native-toast-message';
 import { router } from "expo-router";
 import Colors from "./constants/colors";
-
+import { API_URL } from "@env";
 export default function AlterarSenhaObrigatoria() {
   const params = useLocalSearchParams();
   
@@ -63,7 +63,7 @@ export default function AlterarSenhaObrigatoria() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-      const response = await fetch('https://elo-api-git-main-alexseyfs-projects.vercel.app/usuarios', {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ export default function AlterarSenhaObrigatoria() {
         novaSenha
       };
 
-      const response = await fetch('https://elo-api-git-main-alexseyfs-projects.vercel.app/alterar-senha', {
+      const response = await fetch(`${API_URL}/alterar-senha`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ export default function AlterarSenhaObrigatoria() {
         });
 
         try {
-          const userResponse = await fetch(`https://elo-api-git-main-alexseyfs-projects.vercel.app/usuarios/${userIdNumber}`, {
+          const userResponse = await fetch(`${API_URL}/usuarios/${userIdNumber}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

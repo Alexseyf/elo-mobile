@@ -2,6 +2,7 @@ import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, StatusBar }
 import { Link, router } from "expo-router";
 import { useState } from 'react';
 import Toast from 'react-native-toast-message';
+import { API_URL } from '@env';
 
 export default function Index() {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ export default function Index() {
         return;
       }
       
-      const response = await fetch("https://elo-api-git-main-alexseyfs-projects.vercel.app/login", {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

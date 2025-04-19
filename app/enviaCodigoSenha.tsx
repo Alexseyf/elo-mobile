@@ -6,6 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons"
 import { useState } from "react"
 import { useRouter } from "expo-router"
 import Toast from "react-native-toast-message"
+import { API_URL } from "@env"
 
 export default function Index() {
   const { email } = useLocalSearchParams()
@@ -33,7 +34,7 @@ export default function Index() {
         return
       }
 
-      const response = await fetch("https://backend-projeto-integrador-eta.vercel.app/valida-senha", {
+      const response = await fetch(`${API_URL}/valida-senha`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

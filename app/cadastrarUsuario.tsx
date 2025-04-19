@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import Colors from "./constants/colors";
 import { useState } from "react";
 import Toast from 'react-native-toast-message';
+import { API_URL } from '@env';
 
 enum TIPO_USUARIO {
   ADMIN = "ADMIN",
@@ -103,7 +104,7 @@ export default function CadastrarUsuario() {
         roles: roles
       };
       
-      const response = await fetch('https://elo-api-git-main-alexseyfs-projects.vercel.app/usuarios', {
+      const response = await fetch(`${API_URL}/usuarios`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
