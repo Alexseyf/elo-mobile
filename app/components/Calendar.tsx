@@ -8,7 +8,7 @@ import { ptBR } from "../utils/localeCalendarConfig";
 LocaleConfig.locales["pt-br"] = ptBR;
 LocaleConfig.defaultLocale = "pt-br";
 
-export function CalendarComponent() {
+export default function CalendarComponent() {
     const [day, setDay] = useState<DateData>()
   return (
     <View style={{ flex: 1 }}>
@@ -45,7 +45,7 @@ export function CalendarComponent() {
       markedDates={day && {
         [day.dateString]: {
           selected: true,
-        },
+        }
       }}
       />
     </View>

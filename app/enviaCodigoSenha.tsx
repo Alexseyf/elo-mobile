@@ -71,7 +71,7 @@ export default function Index() {
           type: "success",
           text1: "Senha alterada com sucesso!",
         })
-        router.push("./login")
+        router.push("/")
       } else if (response.status === 400) {
         Toast.show({
           type: "error",
@@ -116,7 +116,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <StatusBar hidden />
-      <Link href="./login" style={styles.backButton}>
+      <Link href="/" style={styles.backButton}>
         <MaterialIcons name="arrow-back" size={24} color="#fff" />
       </Link>
       <View style={styles.formContainer}>

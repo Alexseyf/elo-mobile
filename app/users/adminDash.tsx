@@ -1,36 +1,37 @@
-import { Text, View, StyleSheet, StatusBar } from "react-native";
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, Platform } from "react-native";
 import { Link } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
+import Colors from "../constants/colors";
 
 export default function Index() {
   return (
     <View style={styles.container}>
       <StatusBar hidden />
-      <Link href="./" style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={24} color="#fff" />
-      </Link>
       <View style={styles.formContainer}>
-        {/* <Text style={styles.title}>Admin Dashboard</Text> */}
+        <View style={styles.buttonGrid}>
+          <Link href="../usuarios" asChild>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Usuários</Text>
+            </TouchableOpacity>
+          </Link>
 
-        <Link href="../cadastro" style={styles.button}>
-          <Text style={styles.buttonText}>Cadastro</Text>
-        </Link>
+          <Link href="../turmas" asChild>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Turmas</Text>
+            </TouchableOpacity>
+          </Link>
 
-        <Link href="../usuarios" style={styles.button}>
-          <Text style={styles.buttonText}>Usuários</Text>
-        </Link>
+          <Link href="../diario/page" asChild>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Diario</Text>
+            </TouchableOpacity>
+          </Link>
 
-        <Link href="../turmas" style={styles.button}>
-          <Text style={styles.buttonText}>Turmas</Text>
-        </Link>
-
-        <Link href="../atividades" style={styles.button}>
-          <Text style={styles.buttonText}>Atividades</Text>
-        </Link>
-
-        <Link href="../calendar/calendar" style={styles.button}>
-          <Text style={styles.buttonText}>Calendário</Text>
-        </Link>
+          <Link href="../calendar/calendar" asChild>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Calendário</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
       </View>
     </View>
   );
@@ -39,81 +40,36 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2a4674",
-  },
-  backButton: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-    zIndex: 1,
-    padding: 10,
+    backgroundColor: Colors.blue_btn,
   },
   formContainer: {
     flex: 1,
-    justifyContent: "flex-start",
-    paddingHorizontal: 20,
-    backgroundColor: "#2a4674",
-    marginTop: 60,
-    marginHorizontal: 20,
-    marginBottom: 20,
+    backgroundColor: Colors.blue_btn,
+    padding: 20,
+    marginBottom: Platform.OS === 'ios' ? 30 : 40,
   },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 24,
-    color: "#e1e1e1",
-    textAlign: "center",
-    marginBottom: 30,
-  },
-
-  label: {
-    fontSize: 14,
-    color: "#fff",
-    marginBottom: 8,
-    fontWeight: "500",
-  },
-  input: {
-    height: 50,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#e1e1e1",
+  buttonGrid: {
+    flex: 1,
+    justifyContent: "space-between",
+    paddingVertical: 20,
   },
   button: {
     backgroundColor: "#4a90e2",
-    padding: 15,
-    borderRadius: 8,
+    borderRadius: 0,
+    height: "22%",
+    marginVertical: 10,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
   },
   buttonText: {
-    color: "white",
+    color: Colors.white,
     fontSize: 24,
     fontWeight: "600",
-  },
-  forgotPassword: {
-    marginTop: 15,
-    width: "100%",
     textAlign: "center",
-  },
-  forgotPasswordText: {
-    color: "#e1e1e1",
-    fontSize: 14,
-    textDecorationLine: "underline",
-    textAlign: "center",
-  },
-  logo: {
-    width: 200,
-    height: 200,
-    alignSelf: "center",
-    marginBottom: 10,
   },
 });

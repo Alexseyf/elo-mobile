@@ -68,7 +68,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <StatusBar hidden />
-      <Link href="./login" style={styles.backButton}>
+      <Link href="/" style={styles.backButton}>
         <MaterialIcons name="arrow-back" size={24} color="#fff" />
       </Link>
       <View style={styles.formContainer}>
