@@ -96,6 +96,7 @@ export default function Index() {
           <Text style={styles.buttonText}>Enviar</Text>
         </TouchableOpacity>
       </View>
+      <Toast />
     </View>
   );
 }

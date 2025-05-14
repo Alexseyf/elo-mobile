@@ -195,6 +195,7 @@ export const globalStyles = StyleSheet.create({
     color: "#e1e1e1",
     textAlign: "center",
     marginBottom: 30,
+    marginTop: 10,
   },
   
   // Estilos para diários
