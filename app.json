@@ -19,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#2a4674"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.eloapp",
@@ -35,6 +35,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "491ad46d-4630-4803-89f4-2e79ad4e502a"
+      }
     }
   }
 }

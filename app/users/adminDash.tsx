@@ -185,6 +185,18 @@ export default function Index() {
             </TouchableOpacity>
           </Link>
 
+          <Link href="../listaAlunosAtivos" asChild>
+            <TouchableOpacity style={globalStyles.card}>
+              <View style={globalStyles.cardContent}>
+                <Text style={globalStyles.cardEmoji}>👨‍👧‍👦</Text>
+                <View style={globalStyles.cardTextContainer}>
+                  <Text style={globalStyles.cardTitle}>Alunos</Text>
+                  <Text style={globalStyles.cardDescription}>Visualizar todos os alunos ativos</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
           <Link href="../listaTurmasDiarios" asChild>
             <TouchableOpacity style={globalStyles.card}>
               <View style={globalStyles.cardContent}>
