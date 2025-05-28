@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "elo-app",
+    "name": "Elo App",
     "slug": "elo-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,7 +21,9 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.eloapp",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
