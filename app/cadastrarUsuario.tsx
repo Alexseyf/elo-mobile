@@ -100,10 +100,12 @@ export default function CadastrarUsuario() {
       
       const userData = {
         nome: formatarNome(nome.trim()),
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         telefone: telefone.trim(),
         roles: roles
       };
+      
+      console.log('Enviando dados:', JSON.stringify(userData));
       
       const response = await fetch(`${config.API_URL}/usuarios`, {
         method: 'POST',
@@ -113,9 +115,21 @@ export default function CadastrarUsuario() {
         body: JSON.stringify(userData)
       });
       
+      console.log('Response status:', response.status);
+      
+      let responseData;
+      try {
+        const responseText = await response.text();
+        console.log('Response body:', responseText);
+        if (responseText) {
+          responseData = JSON.parse(responseText);
+        }
+      } catch (parseError) {
+        console.log('Erro ao analisar resposta:', parseError);
+      }
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao cadastrar usuário');
+        throw new Error(responseData?.message || 'Erro ao cadastrar usuário');
       }
       
       Toast.show({
