@@ -16,7 +16,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.eloapp.com.br"
+        "EXPO_PUBLIC_API_URL": "https://elo-api-git-main-alexseyfs-projects.vercel.app"
       }
     },
     "production": {
@@ -24,7 +24,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.eloapp.com.br"
+        "EXPO_PUBLIC_API_URL": "https://elo-api-git-main-alexseyfs-projects.vercel.app"
       }
     }
   }
