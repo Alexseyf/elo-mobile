@@ -105,8 +105,6 @@ export default function CadastrarUsuario() {
         roles: roles
       };
       
-      console.log('Enviando dados:', JSON.stringify(userData));
-      
       const response = await fetch(`${config.API_URL}/usuarios`, {
         method: 'POST',
         headers: {
@@ -115,12 +113,9 @@ export default function CadastrarUsuario() {
         body: JSON.stringify(userData)
       });
       
-      console.log('Response status:', response.status);
-      
       let responseData;
       try {
         const responseText = await response.text();
-        console.log('Response body:', responseText);
         if (responseText) {
           responseData = JSON.parse(responseText);
         }
@@ -129,7 +124,11 @@ export default function CadastrarUsuario() {
       }
       
       if (!response.ok) {
-        throw new Error(responseData?.message || 'Erro ao cadastrar usuário');
+        if (response.status === 409) {
+          throw new Error(responseData?.erro || 'Email já cadastrado no sistema');
+        } else {
+          throw new Error(responseData?.message || 'Erro ao cadastrar usuário');
+        }
       }
       
       Toast.show({
@@ -144,11 +143,16 @@ export default function CadastrarUsuario() {
       }, 500);
       
     } catch (error) {
+      const errorTitle = 
+        error instanceof Error && error.message.includes('Email já cadastrado') 
+          ? 'Email já cadastrado' 
+          : 'Erro';
+      
       Toast.show({
         type: 'error',
-        text1: 'Erro',
+        text1: errorTitle,
         text2: error instanceof Error ? error.message : 'Falha ao cadastrar usuário',
-        visibilityTime: 3000
+        visibilityTime: 4000
       });
     } finally {
       setIsLoading(false);
