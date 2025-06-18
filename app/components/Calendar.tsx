@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 import { useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { ptBR } from "../utils/localeCalendarConfig";
+import Colors from "../constants/colors";
 
 LocaleConfig.locales["pt-br"] = ptBR;
 LocaleConfig.defaultLocale = "pt-br";
@@ -14,24 +15,28 @@ export default function CalendarComponent() {
     <View style={{ flex: 1 }}>
       <Calendar style={styles.calendar}
       renderArrow={(direction: "right" | "left") => (
-        <Feather name={`chevron-${direction}`} size={24} color="#E8E8E8"  />
+        <Feather name={`chevron-${direction}`} size={24} color={Colors.white} />
       )}
       headerStyle={{
         borderBottomWidth: 0.5,
-        borderBottomColor: "#E8E8E8",
+        borderBottomColor: Colors.white,
         paddingBottom: 10,
         marginBottom: 10,
       }}
       theme={{
         textMonthFontSize: 20,
-        monthTextColor: "#E8E8E8",
-        todayTextColor: "#77DD77",
-        selectedDayBackgroundColor: "#F05543",
-        selectedDayTextColor: "#E8E8E8",
-        arrowColor: "#E8E8E8",
-        calendarBackground: "#transparent",
+        textMonthFontFamily: "Roboto_Condensed-SemiBold",
+        textDayFontFamily: "Roboto_Condensed-Regular",
+        textDayHeaderFontFamily: "Roboto_Condensed-SemiBold",
+        monthTextColor: Colors.white,
+        todayTextColor: Colors.green_btn,
+        selectedDayBackgroundColor: Colors.red_btn,
+        selectedDayTextColor: Colors.white,
+        arrowColor: Colors.white,
+        calendarBackground: "transparent",
         textDayStyle: {
-            color: "#E8E8E8",
+            color: Colors.white,
+            fontFamily: "Roboto_Condensed-Regular",
         },
         textDisabledColor: "#717171",
         arrowStyle: {

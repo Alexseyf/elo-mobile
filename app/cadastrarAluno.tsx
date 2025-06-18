@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Toast from 'react-native-toast-message';
 import config from '../config';
 import { formatarNome, formatarNomeTurma } from "./utils/formatText";
+import globalStyles from '../styles/globalStyles';
 
 interface Turma {
   id: number;
@@ -379,8 +380,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 22,
-    fontWeight: "bold",
     color: "#fff",
   },
   scrollContent: {
@@ -403,8 +404,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   formLabel: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
-    fontWeight: "600",
     color: "#333",
     marginBottom: 8,
     marginTop: 16,
@@ -413,18 +414,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     borderRadius: 8,
     padding: 12,
-    fontSize: 16,
+    fontFamily: "Roboto_Condensed-ExtraLightItalic",
+    fontSize: 14,
   },
   dateInput: {
     backgroundColor: "#f5f5f5",
     borderRadius: 8,
     padding: 12,
+    fontFamily: "Roboto_Condensed-ExtraLightItalic",
     fontSize: 16,
     height: 48,
     justifyContent: 'center',
   },
   dateText: {
-    fontSize: 16,
+    fontFamily: "Roboto_Condensed-ExtraLightItalic",
+    fontSize: 14,
     color: '#333',
   },
   modalContainer: {
@@ -446,8 +450,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 18,
-    fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -477,11 +481,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.blue_btn,
   },
   dateOptionText: {
-    fontSize: 16,
+    fontFamily: "Roboto_Condensed-Regular",
+    fontSize: 12,
   },
   dateOptionTextSelected: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: 'white',
-    fontWeight: '600',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -501,12 +506,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.blue_btn,
   },
   modalCancelButtonText: {
+    fontFamily: "Roboto_Condensed-Regular",
     color: '#333',
-    fontWeight: '600',
   },
   modalConfirmButtonText: {
     color: 'white',
-    fontWeight: '600',
+    fontFamily: "Roboto_Condensed-SemiBold",
   },
   turmasContainer: {
     flexDirection: 'row',
@@ -529,12 +534,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.blue_btn,
   },
   turmaText: {
-    fontSize: 14,
+    fontFamily: "Roboto_Condensed-Regular",
+    fontSize: 12,
     color: "#333",
   },
   turmaTextSelected: {
     color: "#fff",
-    fontWeight: "600",
+    fontFamily: "Roboto_Condensed-SemiBold",
   },
   noTurmasText: {
     fontStyle: 'italic',
@@ -549,16 +555,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   submitButtonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
   },
   backButton: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingVertical: 14,
     marginHorizontal: 16,
     marginTop: 10,
-    marginBottom: Platform.OS === 'ios' ? 80 : 60,
+    marginBottom: Platform.OS === 'ios' ? 60 : 40,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -569,8 +575,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   backButtonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
-    fontWeight: "600",
     color: Colors.blue_btn,
   }
 });

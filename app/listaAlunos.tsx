@@ -135,7 +135,7 @@ export default function ListaAlunos() {
 
   return (
     <View style={globalStyles.container}>
-      <StatusBar backgroundColor={Colors.blue_btn} barStyle="light-content" />
+      <StatusBar hidden barStyle="light-content" />
 
       <View style={globalStyles.header}>
         <Text style={globalStyles.headerTitle}>Alunos</Text>
@@ -226,22 +226,22 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   alunoAvatarText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: '#fff',
     fontSize: 20,
-    fontWeight: 'bold',
   },
   alunoDetails: {
     flex: 1,
   },
   alunoNome: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "Roboto_Condensed-Regular",
     color: "#333",
     marginBottom: 4,
   },
   diarioStatus: {
     fontSize: 14,
     color: Colors.green_btn,
-    fontWeight: '500',
+    fontFamily: "Roboto_Condensed-SemiBold",
   }
 });

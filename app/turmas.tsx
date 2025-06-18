@@ -301,7 +301,7 @@ export default function Turmas() {
   
   return (
     <View style={globalStyles.container}>
-      <StatusBar backgroundColor={Colors.blue_btn} barStyle="light-content" />
+      <StatusBar hidden barStyle="light-content" />
       
       <View style={globalStyles.header}>
         <Text style={globalStyles.headerTitle}>Lista de Turmas</Text>
@@ -330,7 +330,7 @@ export default function Turmas() {
               {turmas.map((turma) => (
                 <View key={turma.id} style={styles.turmaCard}>
                   <View style={styles.turmaNomeContainer}>
-                    <MaterialIcons name="class" size={28} color={Colors.blue_btn} style={styles.turmaIcon} />
+                    {/* <MaterialIcons name="class" size={28} color={Colors.blue_btn} style={styles.turmaIcon} /> */}
                     <Text style={styles.turmaNome}>{formatarNomeTurma(turma.nome)}</Text>
                     {turma.professores && turma.professores.length > 0 && (
                       <TouchableOpacity 
@@ -402,14 +402,14 @@ export default function Turmas() {
         <View style={globalStyles.modalContainer}>
           <View style={globalStyles.modalContent}>
             <View style={globalStyles.modalHeader}>
-              <Text style={globalStyles.modalTitle}>
+              {/* <Text style={globalStyles.modalTitle} numberOfLines={2}>
                 {selectedTurma?.professores && selectedTurma.professores.length > 0 
                   ? `Remover Professor de ${selectedTurma ? formatarNomeTurma(selectedTurma.nome) : ''}`
                   : selectedTurma ? `Vincular Professor à ${formatarNomeTurma(selectedTurma.nome)}` : 'Vincular Professor'}
-              </Text>
-              <TouchableOpacity onPress={handleCloseModal}>
+              </Text> */}
+              {/* <TouchableOpacity style={styles.closeButton} onPress={handleCloseModal}>
                 <MaterialIcons name="close" size={24} color="#333" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             {confirmDelete ? (
@@ -436,7 +436,7 @@ export default function Turmas() {
               <>
                 {selectedTurma?.professores && selectedTurma.professores.length > 0 ? (
                   <>
-                    <Text style={styles.professorVinculadoText}>Professor vinculado à turma:</Text>
+                    <Text style={styles.professorVinculadoText}>Professor da turma:</Text>
                     {selectedTurma.professores.map((professor) => (
                       <View key={professor.id} style={styles.professorDetailItem}>
                         <View style={styles.professorSelectAvatar}>
@@ -447,13 +447,13 @@ export default function Turmas() {
                         <Text style={styles.professorDetailName}>
                           {professor.usuario?.nome || professor.nome || "Professor"}
                         </Text>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                           style={styles.removeButton}
                           onPress={() => handleDeleteProfessor(professor)}
                         >
                           <MaterialIcons name="delete" size={22} color="red" />
                           <Text style={styles.removeButtonText}>Remover</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                       </View>
                     ))}
                   </>
@@ -502,20 +502,29 @@ export default function Turmas() {
                     <Text style={styles.modalCancelButtonText}>Cancelar</Text>
                   </TouchableOpacity>
                   
-                  <TouchableOpacity
-                    style={[
-                      styles.modalSaveButton,
-                      (selectedProfessorId === null || isSubmitting) && styles.modalSaveButtonDisabled
-                    ]}
-                    onPress={vincularProfessorTurma}
-                    disabled={selectedProfessorId === null || isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Text style={styles.modalSaveButtonText}>Vincular</Text>
-                    )}
-                  </TouchableOpacity>
+                  {selectedTurma?.professores && selectedTurma.professores.length > 0 ? (
+                    <TouchableOpacity
+                      style={styles.modalDeleteButton}
+                      onPress={() => handleDeleteProfessor(selectedTurma.professores[0])}
+                    >
+                      <Text style={styles.modalDeleteButtonText}>Remover</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={[
+                        styles.modalSaveButton,
+                        (selectedProfessorId === null || isSubmitting) && styles.modalSaveButtonDisabled
+                      ]}
+                      onPress={vincularProfessorTurma}
+                      disabled={selectedProfessorId === null || isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <Text style={styles.modalSaveButtonText}>Vincular</Text>
+                      )}
+                    </TouchableOpacity>
+                  )}
                 </View>
               </>
             )}
@@ -554,8 +563,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   turmaNome: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: "Roboto_Condensed-SemiBold",
+    fontSize: 16,
     color: '#333',
   },
   editButton: {
@@ -566,8 +575,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   professorTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
-    fontWeight: '600',
     color: '#555',
     marginBottom: 8,
   },
@@ -581,8 +590,9 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   professorNome: {
+    fontFamily: "Roboto_Condensed-Regular",
     marginLeft: 8,
-    fontSize: 15,
+    fontSize: 14,
     color: '#333',
   },
   addProfessorContainer: {
@@ -597,6 +607,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   addProfessorText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     marginLeft: 8,
     fontSize: 14,
     color: '#fff',
@@ -614,6 +625,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   countText: {
+    fontFamily: "Roboto_Condensed-Regular",
     marginLeft: 6,
     fontSize: 14,
     color: '#666',
@@ -624,6 +636,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   modalEmptyText: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: '#666',
     marginTop: 8,
@@ -652,11 +665,12 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   professorSelectAvatarText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 18,
-    fontWeight: 'bold',
     color: '#333',
   },
   professorSelectName: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: '#333',
     flex: 1,
@@ -679,6 +693,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalCancelButtonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
     color: '#333',
   },
@@ -694,6 +709,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
   },
   modalSaveButtonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
     color: '#fff',
   },
@@ -703,6 +719,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   confirmDeleteText: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: '#333',
     textAlign: 'center',
@@ -723,6 +740,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   confirmDeleteCancelText: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: '#333',
   },
@@ -735,12 +753,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   confirmDeleteConfirmText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
     color: '#fff',
   },
   professorVinculadoText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: '#333',
     marginBottom: 8,
   },
@@ -750,6 +769,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   professorDetailName: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: '#333',
     flex: 1,
@@ -763,5 +783,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'red',
     marginLeft: 4,
+  },
+  closeButton: {
+    padding: 5,
+  },
+  modalDeleteButton: {
+    backgroundColor: 'red',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
+  },
+  modalDeleteButtonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
+    fontSize: 16,
+    color: '#fff',
   },
 });

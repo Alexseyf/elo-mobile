@@ -16,6 +16,7 @@ import ItemsRequest from '../components/DiarioSteps/ItemsRequest';
 import ObservacoesInput from '../components/DiarioSteps/ObservacoesInput';
 import DiarioSummary from '../components/DiarioSteps/DiarioSummary';
 import SleepPeriod  from '../types/diario';
+import globalStyles from '../../styles/globalStyles';
 
 export default function DiarioPage() {
   const { alunoId, alunoNome, turmaId, nomeTurma, diarioId, modoEdicao } = useLocalSearchParams<{ 
@@ -398,22 +399,18 @@ export default function DiarioPage() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={globalStyles.container}>
         <StatusBar hidden />
-        <View style={styles.loadingContainer}>
+        <View style={globalStyles.loadingContainer}>
           <ActivityIndicator size="large" color="#fff" />
-          <Text style={styles.loadingText}>Carregando dados do diário...</Text>
+          <Text style={globalStyles.loadingText}>Carregando dados do diário...</Text>
         </View>
       </SafeAreaView>
     );
   }
-
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={globalStyles.container}>
       <StatusBar hidden />
-      <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-        <MaterialIcons name="close" size={24} color="#fff" />
-      </TouchableOpacity>
       
       <View style={styles.formContainer}>
         <Text style={styles.title}>
@@ -425,10 +422,9 @@ export default function DiarioPage() {
         <View style={styles.componentContainer}>
           {steps[currentStep].render()}
         </View>
-        
-        <View style={styles.buttonContainer}>
+          <View style={styles.buttonContainer}>
           <View style={styles.buttonRow}>
-            {currentStep > 0 && (
+            {currentStep > 0 ? (
               <TouchableOpacity 
                 style={[styles.navButton, styles.previousButton]} 
                 onPress={goToPreviousStep}
@@ -436,6 +432,15 @@ export default function DiarioPage() {
               >
                 <MaterialIcons name="arrow-back" size={24} color="#fff" />
                 <Text style={styles.buttonText}>Anterior</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity 
+                style={[styles.navButton, styles.previousButton]} 
+                onPress={handleGoBack}
+                disabled={isSaving}
+              >
+                <MaterialIcons name="arrow-back" size={24} color="#fff" />
+                <Text style={styles.buttonText}>Voltar</Text>
               </TouchableOpacity>
             )}
             
@@ -472,68 +477,61 @@ export default function DiarioPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
+const styles = StyleSheet.create({  container: {
     flex: 1,
     backgroundColor: '#2a4674',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    zIndex: 1,
-    padding: 10,
-  },
-  formContainer: {
+  },  formContainer: {
     flex: 1,
     justifyContent: 'flex-start',
     paddingHorizontal: 20,
     backgroundColor: '#2a4674',
-    marginTop: 60,
+    marginTop: 40,
     marginHorizontal: 20,
     marginBottom: Platform.OS === 'ios' ? 30 : 20,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 18,
-    color: '#fff',
-  },
+  // loadingContainer: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
+  // loadingText: {
+  //   marginTop: 16,
+  //   fontSize: 18,
+  //   color: '#fff',
+  // },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: '#fff',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   alunoNome: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 20,
     color: '#e1e1e1',
     textAlign: 'center',
     marginBottom: 10,
   },
   stepTitle: {
-    fontSize: 22,
+    fontSize: 14,
     color: '#e1e1e1',
     textAlign: 'center',
-    marginBottom: 30,
-  },
-  buttonRow: {
+    marginBottom: 10,
+  },  buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 20,
-  },
-  navButton: {
+    paddingHorizontal: 5,
+  },navButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 15,
     borderRadius: 8,
     minWidth: 120,
+    width: '49%',
+    maxWidth: 180,
   },
   previousButton: {
     backgroundColor: '#5c6bc0',
@@ -551,9 +549,9 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   buttonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: 'white',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 14,
     marginHorizontal: 8,
   },
   componentContainer: {

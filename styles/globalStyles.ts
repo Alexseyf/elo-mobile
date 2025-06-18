@@ -11,17 +11,18 @@ export const globalStyles = StyleSheet.create({
   // Estilos do cabeçalho
   header: {
     backgroundColor: Colors.blue_btn,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingTop: Platform.OS === 'ios' ? 60 : 50,
     paddingBottom: 20,
     alignItems: "center",
     justifyContent: "center",
   },
   headerTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 22,
-    fontWeight: "bold",
     color: "#fff",
   },
   headerSubtitle: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: "#fff",
     marginTop: 4,
@@ -46,6 +47,7 @@ export const globalStyles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: '#fff',
   },
@@ -58,6 +60,7 @@ export const globalStyles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyText: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 18,
     color: '#fff',
     marginTop: 16,
@@ -89,14 +92,39 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 18,
     fontWeight: "600",
     color: "#333",
     marginBottom: 4,
   },
   cardDescription: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 14,
     color: "#666",
+  },
+    cardsContainer: {
+    marginTop: 10,
+  },
+    turmaCard: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+    alunoCard: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   
   // Estilos para formulários
@@ -109,6 +137,25 @@ export const globalStyles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 20,
   },
+    userFormContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+    userFormLabel: {
+    fontFamily: "Roboto_Condensed-SemiBold",
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 8,
+    marginTop: 16,
+  },
   inputContainer: {
     marginBottom: 20,
   },
@@ -118,7 +165,8 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
-    fontSize: 16,
+    fontFamily: "Roboto_Condensed-ExtraLight",
+    fontSize: 14,
     borderWidth: 1,
     borderColor: "#e1e1e1",
   },
@@ -128,6 +176,31 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: "500",
   },
+    profileSelection: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 10,
+    },
+    profileOption: {
+      flex: 1,
+      backgroundColor: "#f0f0f0",
+      padding: 8,
+      borderRadius: 8,
+      marginHorizontal: 4,
+      alignItems: 'center',
+    },
+    profileOptionActive: {
+      backgroundColor: Colors.blue_btn,
+    },
+    profileOptionText: {
+      fontFamily: "Roboto_Condensed-Regular",
+      fontSize: 10,
+      color: "#333",
+    },
+    profileOptionTextActive: {
+      color: "#fff",
+      fontWeight: "600",
+    },
   
   // Estilos para botões
   button: {
@@ -139,15 +212,15 @@ export const globalStyles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
-    fontWeight: "600",
   },
   backButton: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingVertical: 14,
     marginHorizontal: 16,
     marginTop: 10,
-    marginBottom: Platform.OS === 'ios' ? 30 : 20,
+    marginBottom: Platform.OS === 'ios' ? 30 : 40,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -158,6 +231,7 @@ export const globalStyles = StyleSheet.create({
     elevation: 2,
   },
   backButtonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
     fontWeight: "600",
     color: Colors.blue_btn,
@@ -166,7 +240,7 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingVertical: 14,
     marginHorizontal: 16,
-    marginBottom: Platform.OS === 'ios' ? 30 : 20,
+    marginBottom: Platform.OS === 'ios' ? 30 : 40,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -177,20 +251,34 @@ export const globalStyles = StyleSheet.create({
     elevation: 2,
   },
   logoutButtonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
     fontWeight: "600",
     color: "#f05454",
   },
-  
-  // Estilos para títulos e textos
+  submitButton: {
+      backgroundColor: Colors.blue_btn,
+      marginTop: 30,
+      padding: 15,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    submitButtonText: {
+      color: "#fff",
+      fontSize: 16,
+      fontWeight: "600",
+    },
+
+    // Estilos para títulos e textos
   title: {
+    fontFamily: "Roboto_Condensed-SemiBold,",
     fontSize: 24,
-    fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: "#e1e1e1",
     textAlign: "center",
@@ -233,17 +321,18 @@ export const globalStyles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: 'rgba(74, 144, 226, 0.3)',
-    borderWidth: 1,
-    borderColor: '#4a90e2',
+    borderWidth: 1,    borderColor: '#4a90e2',
   },
   optionText: {
     fontSize: 16,
     color: '#e1e1e1',
     marginLeft: 10,
+    fontFamily: "Roboto_Condensed-Regular",
   },
   selectedOptionText: {
     color: '#ffffff',
     fontWeight: '600',
+    fontFamily: "Roboto_Condensed-SemiBold",
   },
   
   // Estilos para modais
@@ -259,8 +348,7 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     elevation: 5,
-  },
-  modalHeader: {
+  },  modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -270,6 +358,8 @@ export const globalStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
+    flex: 1,
+    marginRight: 10,
   },
 });
 
@@ -280,6 +370,7 @@ export const diarioStyles = StyleSheet.create({
     flex: 1,
   },
   description: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 18,
     color: '#e1e1e1',
     marginBottom: 20,
@@ -322,13 +413,14 @@ export const diarioStyles = StyleSheet.create({
     marginBottom: 15,
   },
   timeLabel: {
+    fontFamily: 'Roboto_Condensed-Regular',
     fontSize: 16,
     color: '#e1e1e1',
-  },
-  timeValue: {
+  },  timeValue: {
     fontSize: 16,
     color: '#4a90e2',
     fontWeight: 'bold',
+    fontFamily: 'Roboto_Condensed-SemiBold',
   },
   observacoesSection: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',

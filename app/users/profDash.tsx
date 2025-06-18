@@ -245,7 +245,7 @@ export default function ProfDash() {
 
   return (
     <View style={globalStyles.container}>
-      <StatusBar backgroundColor={Colors.blue_btn} barStyle="light-content" />
+      <StatusBar hidden barStyle="light-content" />
       
       <ScrollView 
         style={globalStyles.scrollContent} 
@@ -322,16 +322,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 20,
     paddingBottom: Platform.OS === 'ios' ? 40 : 30,
-  },
-  sectionContainer: {
+  },  sectionContainer: {
     marginBottom: 24,
   },
   sectionTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 18,
-    fontWeight: "600",
     color: "#fff",
     marginBottom: 12,
-    marginLeft: 4,
+    textAlign: "center",
   },
   loadingContainer: {
     padding: 20,

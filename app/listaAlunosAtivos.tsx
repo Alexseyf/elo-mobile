@@ -185,7 +185,7 @@ export default function ListaAlunosAtivos() {
 
   return (
     <View style={globalStyles.container}>
-      <StatusBar backgroundColor={Colors.blue_btn} barStyle="light-content" />
+      <StatusBar hidden barStyle="light-content" />
 
       <View style={globalStyles.header}>
         <Text style={globalStyles.headerTitle}>Alunos Ativos</Text>
@@ -263,6 +263,7 @@ export default function ListaAlunosAtivos() {
                     </View>
                     <TouchableOpacity 
                       style={styles.editButton}
+                      onPress={() => router.push(`/detalheAluno?id=${aluno.id}`)}
                     >
                       <MaterialIcons name="edit" size={20} color="#fff" />
                     </TouchableOpacity>
@@ -295,8 +296,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   filterLabel: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
-    fontWeight: '600',
     color: '#333',
     marginBottom: 10,
   },
@@ -307,6 +308,7 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
   },
   pickerInput: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     paddingVertical: 12,
     paddingHorizontal: 10,
@@ -338,21 +340,22 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   alunoAvatarText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: '#fff',
     fontSize: 20,
-    fontWeight: 'bold',
   },
   alunoDetails: {
     flex: 1,
   },
   alunoNome: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "Roboto_Condensed-Regular",
     color: "#333",
     marginBottom: 4,
   },
   alunoTurma: {
-    fontSize: 14,
+    fontFamily: "Roboto_Condensed-Regular",
+    fontSize: 12,
     color: "#666",
   },
   editButton: {

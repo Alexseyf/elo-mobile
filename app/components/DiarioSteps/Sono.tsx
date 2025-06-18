@@ -286,15 +286,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   description: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 18,
     color: '#e1e1e1',
     marginBottom: 20,
     textAlign: 'center',
   },
   noPeriodsText: {
+    fontFamily: "Roboto_Condensed-Regular",
     textAlign: 'center',
     color: '#e1e1e1',
-    fontStyle: 'italic',
+    fontSize: 16,
     marginBottom: 20,
   },
   sleepPeriodCard: {
@@ -308,11 +310,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 15,
-  },
-  periodTitle: {
+  },  periodTitle: {
     fontSize: 18,
     color: '#fff',
     fontWeight: 'bold',
+    fontFamily: 'Roboto_Condensed-SemiBold',
   },
   headerButtons: {
     flexDirection: 'row',
@@ -340,15 +342,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
-  },
-  timeLabel: {
+  },  timeLabel: {
     fontSize: 16,
     color: '#e1e1e1',
-  },
-  timeValue: {
+    fontFamily: 'Roboto_Condensed-Regular',
+  },  timeValue: {
     fontSize: 16,
-    color: '#4a90e2',
+    color: '#e1e1e1',
     fontWeight: 'bold',
+    fontFamily: 'Roboto_Condensed-SemiBold',
   },
   durationContainer: {
     flexDirection: 'row',
@@ -358,15 +360,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  durationLabel: {
+  },  durationLabel: {
     fontSize: 16,
     color: '#e1e1e1',
-  },
-  durationValue: {
+    fontFamily: 'Roboto_Condensed-Regular',
+  },  durationValue: {
     fontSize: 16,
-    color: '#4a90e2',
+    color: '#e1e1e1',
     fontWeight: 'bold',
+    fontFamily: 'Roboto_Condensed-SemiBold',
   },
   addButton: {
     flexDirection: 'row',
@@ -377,12 +379,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 10,
     marginBottom: 20,
-  },
-  addButtonText: {
+  },  addButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+    fontFamily: 'Roboto_Condensed-SemiBold',
   },
   saveFullWidthButton: {
     flexDirection: 'row',
@@ -392,23 +394,23 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginTop: 10,
-  },
-  saveButtonText: {
+  },  saveButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+    fontFamily: 'Roboto_Condensed-SemiBold',
   },
   disabledButton: {
     backgroundColor: '#cccccc',
     opacity: 0.7,
-  },
-  warningText: {
+  },  warningText: {
     color: '#ffaa00',
     fontSize: 14,
     textAlign: 'center',
     marginTop: 10,
     fontStyle: 'italic',
+    fontFamily: 'Roboto_Condensed-Regular',
   },
   periodHeaderEditing: {
     flexDirection: 'row',
@@ -433,12 +435,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flex: 1,
     marginRight: 5,
-  },
-  cancelButtonText: {
+  },  cancelButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+    fontFamily: 'Roboto_Condensed-SemiBold',
   },
 });
 

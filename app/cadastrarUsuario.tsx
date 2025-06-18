@@ -5,6 +5,7 @@ import { useState } from "react";
 import Toast from 'react-native-toast-message';
 import config from '../config';
 import { formatarNome } from "./utils/formatText";
+import globalStyles from '../styles/globalStyles';
 
 enum TIPO_USUARIO {
   ADMIN = "ADMIN",
@@ -168,16 +169,16 @@ export default function CadastrarUsuario() {
   
   return (
     <>
-      <View style={styles.container}>
+      <View style={globalStyles.container}>
         <StatusBar hidden />
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Cadastrar Novo Usuário</Text>
+        <View style={globalStyles.header}>
+          <Text style={globalStyles.headerTitle}>Cadastrar Novo Usuário</Text>
         </View>
-        <ScrollView style={styles.scrollContent} contentContainerStyle={styles.scrollContentContainer}>
-          <View style={styles.formContainer}>
-            <Text style={styles.formLabel}>Nome Completo</Text>
+        <ScrollView style={globalStyles.scrollContent} contentContainerStyle={globalStyles.scrollContentContainer}>
+          <View style={globalStyles.userFormContainer}>
+            <Text style={globalStyles.userFormLabel}>Nome Completo</Text>
             <TextInput 
-              style={styles.input} 
+              style={globalStyles.input} 
               placeholder="Digite o nome completo"
               value={nome}
               onChangeText={setNome}
@@ -185,9 +186,9 @@ export default function CadastrarUsuario() {
               onBlur={() => setNome(formatarNome(nome))}
             />
             
-            <Text style={styles.formLabel}>E-mail</Text>
+            <Text style={globalStyles.userFormLabel}>E-mail</Text>
             <TextInput 
-              style={styles.input} 
+              style={globalStyles.input} 
               placeholder="Digite o e-mail"
               keyboardType="email-address"
               value={email}
@@ -196,9 +197,9 @@ export default function CadastrarUsuario() {
               autoCapitalize="none"
             />
 
-            <Text style={styles.formLabel}>Telefone</Text>
+            <Text style={globalStyles.userFormLabel}>Telefone</Text>
             <TextInput 
-              style={styles.input} 
+              style={globalStyles.input} 
               placeholder="Digite o telefone"
               keyboardType="phone-pad"
               value={telefone}
@@ -206,177 +207,70 @@ export default function CadastrarUsuario() {
               maxLength={20}
             />
             
-            <Text style={styles.formLabel}>Perfil de Acesso</Text>
-            <View style={styles.profileSelection}>
+            <Text style={globalStyles.userFormLabel}>Perfil de Acesso</Text>
+            <View style={globalStyles.profileSelection}>
               <TouchableOpacity 
                 style={[
-                  styles.profileOption, 
-                  selectedProfiles.administrador && styles.profileOptionActive
+                  globalStyles.profileOption, 
+                  selectedProfiles.administrador && globalStyles.profileOptionActive
                 ]}
                 onPress={() => toggleProfile('administrador')}
               >
                 <Text style={[
-                  styles.profileOptionText,
-                  selectedProfiles.administrador && styles.profileOptionTextActive
+                  globalStyles.profileOptionText,
+                  selectedProfiles.administrador && globalStyles.profileOptionTextActive
                 ]}>Administrador</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
                 style={[
-                  styles.profileOption, 
-                  selectedProfiles.professor && styles.profileOptionActive
+                  globalStyles.profileOption, 
+                  selectedProfiles.professor && globalStyles.profileOptionActive
                 ]}
                 onPress={() => toggleProfile('professor')}
               >
                 <Text style={[
-                  styles.profileOptionText,
-                  selectedProfiles.professor && styles.profileOptionTextActive
+                  globalStyles.profileOptionText,
+                  selectedProfiles.professor && globalStyles.profileOptionTextActive
                 ]}>Professor</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
                 style={[
-                  styles.profileOption, 
-                  selectedProfiles.responsavel && styles.profileOptionActive
+                  globalStyles.profileOption, 
+                  selectedProfiles.responsavel && globalStyles.profileOptionActive
                 ]}
                 onPress={() => toggleProfile('responsavel')}
               >
                 <Text style={[
-                  styles.profileOptionText,
-                  selectedProfiles.responsavel && styles.profileOptionTextActive
+                  globalStyles.profileOptionText,
+                  selectedProfiles.responsavel && globalStyles.profileOptionTextActive
                 ]}>Responsável</Text>
               </TouchableOpacity>
             </View>
             
             <TouchableOpacity 
-              style={styles.submitButton} 
+              style={globalStyles.submitButton} 
               onPress={handleCadastrar}
               disabled={isLoading}
             >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.submitButtonText}>Cadastrar</Text>
+                <Text style={globalStyles.submitButtonText}>Cadastrar</Text>
               )}
             </TouchableOpacity>
           </View>
         </ScrollView>
         <TouchableOpacity 
-          style={styles.backButton} 
+          style={globalStyles.backButton} 
           onPress={handleVoltar}
           disabled={isLoading}
         >
-          <Text style={styles.backButtonText}>Voltar</Text>
+          <Text style={globalStyles.backButtonText}>Voltar</Text>
         </TouchableOpacity>
       </View>
       <Toast />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.blue_btn,
-  },
-  header: {
-    backgroundColor: Colors.blue_btn,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  scrollContent: {
-    flex: 1,
-  },
-  scrollContentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 30,
-  },
-  formContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  formLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
-    marginTop: 16,
-  },
-  input: {
-    backgroundColor: "#f5f5f5",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  profileSelection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  profileOption: {
-    flex: 1,
-    backgroundColor: "#f0f0f0",
-    padding: 8,
-    borderRadius: 8,
-    marginHorizontal: 4,
-    alignItems: 'center',
-  },
-  profileOptionActive: {
-    backgroundColor: Colors.blue_btn,
-  },
-  profileOptionText: {
-    fontSize: 14,
-    color: "#333",
-  },
-  profileOptionTextActive: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-  submitButton: {
-    backgroundColor: Colors.blue_btn,
-    marginTop: 30,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  submitButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  backButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    paddingVertical: 14,
-    marginHorizontal: 16,
-    marginTop: 10,
-    marginBottom: Platform.OS === 'ios' ? 80 : 60,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.blue_btn,
-  }
-});

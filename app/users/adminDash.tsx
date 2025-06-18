@@ -150,7 +150,7 @@ export default function Index() {
 
   return (
     <View style={globalStyles.container}>
-      <StatusBar backgroundColor={Colors.blue_btn} barStyle="light-content" />
+      <StatusBar hidden barStyle="light-content" />
 
       <View style={globalStyles.header}>
         <Text style={globalStyles.subtitle}>Olá, {nome}!</Text>
