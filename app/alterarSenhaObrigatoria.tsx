@@ -5,6 +5,8 @@ import Toast from 'react-native-toast-message';
 import { router } from "expo-router";
 import Colors from "./constants/colors";
 import config from '../config';
+import { Feather } from '@expo/vector-icons';
+
 export default function AlterarSenhaObrigatoria() {
   const params = useLocalSearchParams();
   
@@ -25,6 +27,8 @@ export default function AlterarSenhaObrigatoria() {
   
   const [novaSenha, setNovaSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [showNovaSenha, setShowNovaSenha] = useState(false);
+  const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [retryAttempt, setRetryAttempt] = useState(0);
 
@@ -260,26 +264,36 @@ export default function AlterarSenhaObrigatoria() {
           </Text>
 
           <Text style={styles.formLabel}>Nova Senha</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite sua nova senha"
-            secureTextEntry
-            value={novaSenha}
-            onChangeText={setNovaSenha}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Digite sua nova senha"
+              secureTextEntry={!showNovaSenha}
+              value={novaSenha}
+              onChangeText={setNovaSenha}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <TouchableOpacity onPress={() => setShowNovaSenha(!showNovaSenha)} style={styles.icon}>
+              <Feather name={showNovaSenha ? 'eye' : 'eye-off'} size={24} color="#666" />
+            </TouchableOpacity>
+          </View>
 
           <Text style={styles.formLabel}>Confirmar Nova Senha</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Confirme sua nova senha"
-            secureTextEntry
-            value={confirmarSenha}
-            onChangeText={setConfirmarSenha}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Confirme sua nova senha"
+              secureTextEntry={!showConfirmarSenha}
+              value={confirmarSenha}
+              onChangeText={setConfirmarSenha}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <TouchableOpacity onPress={() => setShowConfirmarSenha(!showConfirmarSenha)} style={styles.icon}>
+              <Feather name={showConfirmarSenha ? 'eye' : 'eye-off'} size={24} color="#666" />
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             style={styles.submitButton}
@@ -306,14 +320,14 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: Colors.blue_btn,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingTop: Platform.OS === 'ios' ? 60 : 50,
     paddingBottom: 20,
     alignItems: "center",
     justifyContent: "center",
   },
   headerTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 22,
-    fontWeight: "bold",
     color: "#fff",
   },
   formContainer: {
@@ -329,6 +343,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   explanation: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: "#333",
     marginBottom: 20,
@@ -336,6 +351,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   formLabel: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
@@ -343,6 +359,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   input: {
+    fontFamily: "Roboto_Condensed-Regular",
     backgroundColor: "#f5f5f5",
     borderRadius: 8,
     padding: 12,
@@ -356,8 +373,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   submitButtonText: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginTop: 8,
+  },
+  passwordInput: {
+    fontFamily: "Roboto_Condensed-ExtraLight",
+    flex: 1,
+    height: 48, // Altura consistente
+    fontSize: 16,
+  },
+  icon: {
+    marginLeft: 10,
   },
 });

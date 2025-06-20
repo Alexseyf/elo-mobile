@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     fontFamily: "Roboto_Condensed-Regular",
     color: "#e1e1e1",
-    fontSize: 14,
+    fontSize: 16,
     textDecorationLine: "underline",
     textAlign: "center",
   },
@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
     height: 200,
     alignSelf: 'center',
     marginBottom: 10,
+    marginTop: 80
   },
   buttonDisabled: {
     backgroundColor: '#c8c8c8',

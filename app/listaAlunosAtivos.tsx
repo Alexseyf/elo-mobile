@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, ActivityIndicator, RefreshControl } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNPickerSelect from 'react-native-picker-select';
 import { formatarNome, formatarNomeTurma } from "./utils/formatText";
@@ -50,30 +49,29 @@ export default function ListaAlunosAtivos() {
 
       const authToken = await AsyncStorage.getItem('@auth_token');
       const userDataString = await AsyncStorage.getItem('@user_data');
-      
+
       if (!authToken) {
-        Toast.show({
-          type: 'error',
-          text1: 'Erro de autenticação',
-          text2: 'Sessão expirada. Por favor, faça login novamente.',
-          visibilityTime: 3000
-        });
+        alert('Sessão expirada. Faça login novamente.');
         setTimeout(() => {
-          router.replace('/');
+          router.replace({ pathname: '/' });
         }, 2000);
         return;
       }
 
       let userRoles = [];
-      if (userDataString) {
-        const userData = JSON.parse(userDataString);
-        userRoles = userData.roles || [];
+      try {
+        if (userDataString) {
+          const userData = JSON.parse(userDataString);
+          userRoles = userData.roles || [];
+        }
+      } catch (err) {
+        console.error("Erro ao fazer parse do user_data", err);
       }
 
       const url = config.API_URL.endsWith('/')
         ? `${config.API_URL}alunos/ativos`
         : `${config.API_URL}/alunos/ativos`;
-      
+
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -81,44 +79,64 @@ export default function ListaAlunosAtivos() {
           'Authorization': `Bearer ${authToken}`
         }
       });
-      
+
       if (response.ok) {
-        const data = await response.json();
-        setAlunos(data);
-        setAlunosFiltrados(data);
+        try {
+          const data = await response.json();
+          setAlunos(data);
+          setAlunosFiltrados(data);
+        } catch (err) {
+          console.error("Erro ao fazer parse da resposta de alunos", err);
+        }
       } else if (response.status === 401) {
-        await AsyncStorage.removeItem('@auth_token');
-        await AsyncStorage.removeItem('@user_id');
-        await AsyncStorage.removeItem('@user_data');
-        
-        Toast.show({
-          type: 'error',
-          text1: 'Sessão expirada',
-          text2: 'Por favor, faça login novamente',
-          visibilityTime: 3000
-        });
+        await AsyncStorage.multiRemove(['@auth_token', '@user_id', '@user_data']);
+        alert('Sessão expirada. Faça login novamente.');
         setTimeout(() => {
-          router.replace('/');
+          router.replace({ pathname: '/' });
         }, 2000);
       } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Erro ao buscar alunos',
-          text2: 'Verifique sua conexão com o servidor',
-          visibilityTime: 3000
-        });
+        alert('Erro ao buscar alunos. Verifique sua conexão.');
       }
     } catch (error) {
       console.error('Erro ao buscar alunos ativos:', error);
-      Toast.show({
-        type: 'error',
-        text1: 'Erro de conexão',
-        text2: 'Não foi possível conectar ao servidor',
-        visibilityTime: 3000
-      });
+      alert('Erro de conexão. Não foi possível conectar ao servidor.');
     } finally {
       setLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  const fetchTurmas = async () => {
+    try {
+      setLoadingTurmas(true);
+
+      const authToken = await AsyncStorage.getItem('@auth_token');
+      if (!authToken) return;
+
+      const url = config.API_URL.endsWith('/')
+        ? `${config.API_URL}turmas`
+        : `${config.API_URL}/turmas`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (response.ok) {
+        try {
+          const data = await response.json();
+          setTurmas(data);
+        } catch (err) {
+          console.error("Erro ao fazer parse das turmas", err);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao buscar turmas:', error);
+    } finally {
+      setLoadingTurmas(false);
     }
   };
 
@@ -128,39 +146,6 @@ export default function ListaAlunosAtivos() {
     } else {
       const filtrados = listaAlunos.filter(aluno => aluno.turmaId === turmaId);
       setAlunosFiltrados(filtrados);
-    }
-  };
-
-  const fetchTurmas = async () => {
-    try {
-      setLoadingTurmas(true);
-      
-      const authToken = await AsyncStorage.getItem('@auth_token');
-      
-      if (!authToken) {
-        return;
-      }
-      
-      const url = config.API_URL.endsWith('/')
-        ? `${config.API_URL}turmas`
-        : `${config.API_URL}/turmas`;
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setTurmas(data);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar turmas:', error);
-    } finally {
-      setLoadingTurmas(false);
     }
   };
 
@@ -197,8 +182,8 @@ export default function ListaAlunosAtivos() {
           <Text style={globalStyles.loadingText}>Carregando alunos...</Text>
         </View>
       ) : (
-        <ScrollView 
-          style={globalStyles.scrollContent} 
+        <ScrollView
+          style={globalStyles.scrollContent}
           contentContainerStyle={globalStyles.scrollContentContainer}
           refreshControl={
             <RefreshControl
@@ -209,30 +194,32 @@ export default function ListaAlunosAtivos() {
             />
           }
         >
-          <View style={styles.filterContainer}>
-            <Text style={styles.filterLabel}>Filtrar por Turma:</Text>
-            <View style={styles.pickerContainer}>
-              <RNPickerSelect
-                onValueChange={(value) => handleChangeTurma(value)}
-                items={[
-                  { label: 'Todas as Turmas', value: null },
-                  ...turmas.map(turma => ({ 
-                    label: formatarNomeTurma(turma.nome), 
-                    value: turma.id 
-                  }))
-                ]}
-                value={turmaSelecionada}
-                placeholder={{}}
-                style={{
-                  inputIOS: styles.pickerInput,
-                  inputAndroid: styles.pickerInput,
-                  iconContainer: { top: 10, right: 12 }
-                }}
-                useNativeAndroidPickerStyle={false}
-                Icon={() => <MaterialIcons name="arrow-drop-down" size={24} color="#333" />}
-              />
+          {turmas.length > 0 && (
+            <View style={styles.filterContainer}>
+              <Text style={styles.filterLabel}>Filtrar por Turma:</Text>
+              <View style={styles.pickerContainer}>
+                <RNPickerSelect
+                  onValueChange={handleChangeTurma}
+                  items={[
+                    { label: 'Todas as Turmas', value: null },
+                    ...turmas.map(turma => ({
+                      label: formatarNomeTurma(turma.nome ?? ''),
+                      value: turma.id
+                    }))
+                  ]}
+                  value={turmaSelecionada}
+                  placeholder={{ label: 'Selecione a turma...', value: null }}
+                  style={{
+                    inputIOS: styles.pickerInput,
+                    inputAndroid: styles.pickerInput,
+                    iconContainer: { top: 10, right: 12 }
+                  }}
+                  useNativeAndroidPickerStyle={false}
+                  Icon={() => <MaterialIcons name="arrow-drop-down" size={24} color="#333" />}
+                />
+              </View>
             </View>
-          </View>
+          )}
 
           {alunos.length === 0 ? (
             <View style={globalStyles.emptyContainer}>
@@ -246,39 +233,40 @@ export default function ListaAlunosAtivos() {
             </View>
           ) : (
             <View>
-              {alunosFiltrados.map((aluno) => (
-                <View 
-                  key={aluno.id}
-                  style={styles.alunoCard}
-                >
-                  <View style={styles.alunoInfo}>
-                    <View style={styles.alunoAvatar}>
-                      <Text style={styles.alunoAvatarText}>{aluno.nome.charAt(0)}</Text>
+              {alunosFiltrados.map((aluno) => {
+                const turmaDoAluno = turmas.find(t => t.id === aluno.turmaId);
+                return (
+                  <View key={aluno.id} style={styles.alunoCard}>
+                    <View style={styles.alunoInfo}>
+                      <View style={styles.alunoAvatar}>
+                        <Text style={styles.alunoAvatarText}>{aluno.nome?.charAt(0)}</Text>
+                      </View>
+                      <View style={styles.alunoDetails}>
+                        <Text style={styles.alunoNome}>{formatarNome(aluno.nome)}</Text>
+                        <Text style={styles.alunoTurma}>
+                          {turmaDoAluno
+                            ? `Turma: ${formatarNomeTurma(turmaDoAluno.nome)}`
+                            : 'Sem turma'}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.editButton}
+                        onPress={() => router.push({ pathname: '/detalheAluno', params: { id: aluno.id.toString() } })}
+                      >
+                        <MaterialIcons name="edit" size={20} color="#fff" />
+                      </TouchableOpacity>
                     </View>
-                    <View style={styles.alunoDetails}>
-                      <Text style={styles.alunoNome}>{formatarNome(aluno.nome)}</Text>
-                      <Text style={styles.alunoTurma}>
-                        {aluno.turma ? `Turma: ${formatarNomeTurma(aluno.turma.nome)}` : 'Sem turma'}
-                      </Text>
-                    </View>
-                    <TouchableOpacity 
-                      style={styles.editButton}
-                      onPress={() => router.push(`/detalheAluno?id=${aluno.id}`)}
-                    >
-                      <MaterialIcons name="edit" size={20} color="#fff" />
-                    </TouchableOpacity>
                   </View>
-                </View>
-              ))}
+                );
+              })}
             </View>
           )}
         </ScrollView>
       )}
-      
+
       <TouchableOpacity style={globalStyles.backButton} onPress={handleVoltar}>
         <Text style={globalStyles.backButtonText}>Voltar</Text>
       </TouchableOpacity>
-      <Toast />
     </View>
   );
 }

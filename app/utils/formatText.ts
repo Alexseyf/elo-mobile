@@ -29,12 +29,12 @@ export const formatarNomeTurma = (nomeTurma: string): string => {
   if (!nomeTurma) return nomeTurma;
   
   const mapeamentoTurmas: Record<string, string> = {
-    'BERCARIO2': 'BERÇÁRIO 2',
-    'MATERNAL1': 'MATERNAL 1',
-    'MATERNAL2': 'MATERNAL 2',
-    'PRE1': 'PRÉ 1',
-    'PRE2': 'PRÉ 2',
-    'TURNOINVERSO': 'TURNO INVERSO'
+    'BERCARIO2': 'Berçário 2',
+    'MATERNAL1': 'Maternal 1',
+    'MATERNAL2': 'Maternal 2',
+    'PRE1': 'Pré 1',
+    'PRE2': 'Pré 2',
+    'TURNOINVERSO': 'Turno Inverso'
   };
   
   if (nomeTurma.toUpperCase() in mapeamentoTurmas) {

@@ -166,12 +166,12 @@ export const globalStyles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     fontFamily: "Roboto_Condensed-ExtraLight",
-    fontSize: 14,
+    fontSize: 16,
     borderWidth: 1,
     borderColor: "#e1e1e1",
   },
   label: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#fff",
     marginBottom: 8,
     fontWeight: "500",
@@ -194,12 +194,12 @@ export const globalStyles = StyleSheet.create({
     },
     profileOptionText: {
       fontFamily: "Roboto_Condensed-Regular",
-      fontSize: 10,
+      fontSize: 16,
       color: "#333",
     },
     profileOptionTextActive: {
       color: "#fff",
-      fontWeight: "600",
+      // fontWeight: "600",
     },
   
   // Estilos para botões
@@ -213,14 +213,14 @@ export const globalStyles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontFamily: "Roboto_Condensed-SemiBold",
-    fontSize: 16,
+    fontSize: 14,
   },
   backButton: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingVertical: 14,
-    marginHorizontal: 16,
+    marginHorizontal: 20,
     marginTop: 10,
-    marginBottom: Platform.OS === 'ios' ? 30 : 40,
+    marginBottom: Platform.OS === 'ios' ? 30 : 50,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -240,7 +240,7 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingVertical: 14,
     marginHorizontal: 16,
-    marginBottom: Platform.OS === 'ios' ? 30 : 40,
+    marginBottom: Platform.OS === 'ios' ? 30 : 50,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -272,7 +272,7 @@ export const globalStyles = StyleSheet.create({
     // Estilos para títulos e textos
   title: {
     fontFamily: "Roboto_Condensed-SemiBold,",
-    fontSize: 24,
+    fontSize: 26,
     color: "#fff",
     textAlign: "center",
     marginBottom: 8,

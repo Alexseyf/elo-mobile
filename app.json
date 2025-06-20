@@ -4,12 +4,11 @@
     "slug": "elo-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/logo540.png",
     "scheme": "eloapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/logo.png",
+      "image": "./assets/images/logo540.png",
       "resizeMode": "contain",
       "backgroundColor": "#2a4674"
     },
@@ -18,10 +17,9 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
+        "foregroundImage": "./assets/images/logo540.png",
         "backgroundColor": "#2a4674"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.eloapp",
       "versionCode": 1
     },

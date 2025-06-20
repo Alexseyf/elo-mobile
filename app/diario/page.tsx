@@ -228,7 +228,7 @@ export default function DiarioPage() {
       )
     },
     { 
-      title: 'Resumo',
+      // title: 'Resumo',
       render: () => (
         <DiarioSummary data={diarioData} />
       )
