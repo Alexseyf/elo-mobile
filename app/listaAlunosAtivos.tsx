@@ -1,13 +1,22 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, ActivityIndicator, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  StatusBar,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNPickerSelect from 'react-native-picker-select';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
 import { formatarNome, formatarNomeTurma } from "./utils/formatText";
 import Colors from "./constants/colors";
-import config from '../config';
-import globalStyles from '../styles/globalStyles';
+import config from "../config";
+import globalStyles from "../styles/globalStyles";
 
 interface Responsavel {
   id: number;
@@ -47,13 +56,13 @@ export default function ListaAlunosAtivos() {
     try {
       setLoading(true);
 
-      const authToken = await AsyncStorage.getItem('@auth_token');
-      const userDataString = await AsyncStorage.getItem('@user_data');
+      const authToken = await AsyncStorage.getItem("@auth_token");
+      const userDataString = await AsyncStorage.getItem("@user_data");
 
       if (!authToken) {
-        alert('Sessão expirada. Faça login novamente.');
+        alert("Sessão expirada. Faça login novamente.");
         setTimeout(() => {
-          router.replace({ pathname: '/' });
+          router.replace({ pathname: "/" });
         }, 2000);
         return;
       }
@@ -68,16 +77,16 @@ export default function ListaAlunosAtivos() {
         console.error("Erro ao fazer parse do user_data", err);
       }
 
-      const url = config.API_URL.endsWith('/')
+      const url = config.API_URL.endsWith("/")
         ? `${config.API_URL}alunos/ativos`
         : `${config.API_URL}/alunos/ativos`;
 
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
       });
 
       if (response.ok) {
@@ -89,17 +98,21 @@ export default function ListaAlunosAtivos() {
           console.error("Erro ao fazer parse da resposta de alunos", err);
         }
       } else if (response.status === 401) {
-        await AsyncStorage.multiRemove(['@auth_token', '@user_id', '@user_data']);
-        alert('Sessão expirada. Faça login novamente.');
+        await AsyncStorage.multiRemove([
+          "@auth_token",
+          "@user_id",
+          "@user_data",
+        ]);
+        alert("Sessão expirada. Faça login novamente.");
         setTimeout(() => {
-          router.replace({ pathname: '/' });
+          router.replace({ pathname: "/" });
         }, 2000);
       } else {
-        alert('Erro ao buscar alunos. Verifique sua conexão.');
+        alert("Erro ao buscar alunos. Verifique sua conexão.");
       }
     } catch (error) {
-      console.error('Erro ao buscar alunos ativos:', error);
-      alert('Erro de conexão. Não foi possível conectar ao servidor.');
+      console.error("Erro ao buscar alunos ativos:", error);
+      alert("Erro de conexão. Não foi possível conectar ao servidor.");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -110,19 +123,19 @@ export default function ListaAlunosAtivos() {
     try {
       setLoadingTurmas(true);
 
-      const authToken = await AsyncStorage.getItem('@auth_token');
+      const authToken = await AsyncStorage.getItem("@auth_token");
       if (!authToken) return;
 
-      const url = config.API_URL.endsWith('/')
+      const url = config.API_URL.endsWith("/")
         ? `${config.API_URL}turmas`
         : `${config.API_URL}/turmas`;
 
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
       });
 
       if (response.ok) {
@@ -134,7 +147,7 @@ export default function ListaAlunosAtivos() {
         }
       }
     } catch (error) {
-      console.error('Erro ao buscar turmas:', error);
+      console.error("Erro ao buscar turmas:", error);
     } finally {
       setLoadingTurmas(false);
     }
@@ -144,7 +157,9 @@ export default function ListaAlunosAtivos() {
     if (!turmaId) {
       setAlunosFiltrados(listaAlunos);
     } else {
-      const filtrados = listaAlunos.filter(aluno => aluno.turmaId === turmaId);
+      const filtrados = listaAlunos.filter(
+        (aluno) => aluno.turmaId === turmaId
+      );
       setAlunosFiltrados(filtrados);
     }
   };
@@ -198,25 +213,20 @@ export default function ListaAlunosAtivos() {
             <View style={styles.filterContainer}>
               <Text style={styles.filterLabel}>Filtrar por Turma:</Text>
               <View style={styles.pickerContainer}>
-                <RNPickerSelect
-                  onValueChange={handleChangeTurma}
-                  items={[
-                    { label: 'Todas as Turmas', value: null },
-                    ...turmas.map(turma => ({
-                      label: formatarNomeTurma(turma.nome ?? ''),
-                      value: turma.id
-                    }))
-                  ]}
-                  value={turmaSelecionada}
-                  placeholder={{ label: 'Selecione a turma...', value: null }}
-                  style={{
-                    inputIOS: styles.pickerInput,
-                    inputAndroid: styles.pickerInput,
-                    iconContainer: { top: 10, right: 12 }
-                  }}
-                  useNativeAndroidPickerStyle={false}
-                  Icon={() => <MaterialIcons name="arrow-drop-down" size={24} color="#333" />}
-                />
+                <Picker
+                  selectedValue={turmaSelecionada}
+                  onValueChange={(itemValue) => handleChangeTurma(itemValue)}
+                  style={styles.pickerInput}
+                >
+                  <Picker.Item style={styles.pickerInput} label="Todas as turmas" value={null} />
+                  {turmas.map((turma) => (
+                    <Picker.Item
+                      key={turma.id}
+                      label={formatarNomeTurma(turma.nome ?? "")}
+                      value={turma.id}
+                    />
+                  ))}
+                </Picker>
               </View>
             </View>
           )}
@@ -224,34 +234,47 @@ export default function ListaAlunosAtivos() {
           {alunos.length === 0 ? (
             <View style={globalStyles.emptyContainer}>
               <MaterialIcons name="people" size={60} color="#fff" />
-              <Text style={globalStyles.emptyText}>Nenhum aluno ativo encontrado</Text>
+              <Text style={globalStyles.emptyText}>
+                Nenhum aluno ativo encontrado
+              </Text>
             </View>
           ) : alunosFiltrados.length === 0 ? (
             <View style={globalStyles.emptyContainer}>
               <MaterialIcons name="filter-alt" size={60} color="#fff" />
-              <Text style={globalStyles.emptyText}>Nenhum aluno encontrado nesta turma</Text>
+              <Text style={globalStyles.emptyText}>
+                Nenhum aluno encontrado nesta turma
+              </Text>
             </View>
           ) : (
             <View>
               {alunosFiltrados.map((aluno) => {
-                const turmaDoAluno = turmas.find(t => t.id === aluno.turmaId);
+                const turmaDoAluno = turmas.find((t) => t.id === aluno.turmaId);
                 return (
                   <View key={aluno.id} style={styles.alunoCard}>
                     <View style={styles.alunoInfo}>
                       <View style={styles.alunoAvatar}>
-                        <Text style={styles.alunoAvatarText}>{aluno.nome?.charAt(0)}</Text>
+                        <Text style={styles.alunoAvatarText}>
+                          {aluno.nome?.charAt(0)}
+                        </Text>
                       </View>
                       <View style={styles.alunoDetails}>
-                        <Text style={styles.alunoNome}>{formatarNome(aluno.nome)}</Text>
+                        <Text style={styles.alunoNome}>
+                          {formatarNome(aluno.nome)}
+                        </Text>
                         <Text style={styles.alunoTurma}>
                           {turmaDoAluno
                             ? `Turma: ${formatarNomeTurma(turmaDoAluno.nome)}`
-                            : 'Sem turma'}
+                            : "Sem turma"}
                         </Text>
                       </View>
                       <TouchableOpacity
                         style={styles.editButton}
-                        onPress={() => router.push({ pathname: '/detalheAluno', params: { id: aluno.id.toString() } })}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/detalheAluno",
+                            params: { id: aluno.id.toString() },
+                          })
+                        }
                       >
                         <MaterialIcons name="edit" size={20} color="#fff" />
                       </TouchableOpacity>
@@ -273,7 +296,7 @@ export default function ListaAlunosAtivos() {
 
 const styles = StyleSheet.create({
   filterContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 8,
     padding: 15,
     marginBottom: 16,
@@ -286,22 +309,22 @@ const styles = StyleSheet.create({
   filterLabel: {
     fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
-    color: '#333',
+    color: "#333",
     marginBottom: 10,
   },
   pickerContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
   pickerInput: {
     fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
-    paddingVertical: 12,
+    paddingVertical: 6,
     paddingHorizontal: 10,
-    color: '#333',
-    backgroundColor: 'transparent',
+    color: "#333",
+    backgroundColor: "transparent",
   },
   alunoCard: {
     backgroundColor: "#fff",
@@ -314,8 +337,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   alunoInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
   },
   alunoAvatar: {
@@ -323,13 +346,13 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     backgroundColor: Colors.blue_btn,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 15,
   },
   alunoAvatarText: {
     fontFamily: "Roboto_Condensed-SemiBold",
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
   },
   alunoDetails: {
@@ -351,7 +374,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

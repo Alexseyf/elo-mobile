@@ -218,7 +218,7 @@ export const globalStyles = StyleSheet.create({
   backButton: {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingVertical: 14,
-    marginHorizontal: 20,
+    marginHorizontal: 15,
     marginTop: 10,
     marginBottom: Platform.OS === 'ios' ? 30 : 50,
     borderRadius: 10,
