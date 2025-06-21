@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Platform, ActivityIndicator } from "react-native";
-import { router } from "expo-router";
+import { router, Link } from "expo-router";
 import { useEffect, useState } from "react";
 import Colors from "../constants/colors";
 import config from '@/config';
@@ -191,6 +191,18 @@ export default function RespDash() {
               </View>
             </View>
           </TouchableOpacity>
+
+          <Link href="../calendario/calendario" asChild>
+            <TouchableOpacity style={globalStyles.card}>
+              <View style={globalStyles.cardContent}>
+                <Text style={globalStyles.cardEmoji}>📅</Text>
+                <View style={globalStyles.cardTextContainer}>
+                  <Text style={globalStyles.cardTitle}>Calendário</Text>
+                  <Text style={globalStyles.cardDescription}>Cronograma e eventos escolares</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Link>
 
           <TouchableOpacity 
             style={globalStyles.card}
