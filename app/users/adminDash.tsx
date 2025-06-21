@@ -220,6 +220,18 @@ export default function Index() {
               </View>
             </TouchableOpacity>
           </Link>
+
+          <Link href="../cronograma" asChild>
+            <TouchableOpacity style={globalStyles.card}>
+              <View style={globalStyles.cardContent}>
+                <Text style={globalStyles.cardEmoji}>🗓️</Text>
+                <View style={globalStyles.cardTextContainer}>
+                  <Text style={globalStyles.cardTitle}>Cronograma</Text>
+                  <Text style={globalStyles.cardDescription}>Acessar o cronograma</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Link>
         </View>
       </ScrollView>
       <TouchableOpacity style={globalStyles.logoutButton} onPress={handleLogout}>

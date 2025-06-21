@@ -176,6 +176,13 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: "500",
   },
+  formLabelLight: {
+    fontFamily: "Roboto_Condensed-SemiBold",
+    fontSize: 16,
+    color: "#fff",
+    marginBottom: 8,
+    marginTop: 16,
+  },
     profileSelection: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -268,8 +275,28 @@ export const globalStyles = StyleSheet.create({
       fontSize: 16,
       fontWeight: "600",
     },
+    
+    // Botão branco para uso em fundos azuis
+    submitButtonAlt: {
+      backgroundColor: "rgba(255, 255, 255, 0.9)",
+      marginTop: 30,
+      padding: 15,
+      borderRadius: 8,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+      elevation: 2,
+    },
+    submitButtonAltText: {
+      fontFamily: "Roboto_Condensed-SemiBold",
+      fontSize: 16,
+      fontWeight: "600",
+      color: Colors.blue_btn,
+    },
 
-    // Estilos para títulos e textos
+  // Estilos para títulos e textos
   title: {
     fontFamily: "Roboto_Condensed-SemiBold,",
     fontSize: 26,

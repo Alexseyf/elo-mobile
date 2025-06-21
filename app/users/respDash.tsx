@@ -191,6 +191,21 @@ export default function RespDash() {
               </View>
             </View>
           </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={globalStyles.card}
+            onPress={() => {
+              router.push("/cronograma/listar");
+            }}
+          >
+            <View style={globalStyles.cardContent}>
+              <Text style={globalStyles.cardEmoji}>🗓️</Text>
+              <View style={globalStyles.cardTextContainer}>
+                <Text style={globalStyles.cardTitle}>Cronograma</Text>
+                <Text style={globalStyles.cardDescription}>Visualizar cronograma escolar</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
       
