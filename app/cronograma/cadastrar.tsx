@@ -165,14 +165,14 @@ export default function CadastrarCronograma() {
       </View>
       <ScrollView contentContainerStyle={styles.formContainer} keyboardShouldPersistTaps="handled">
         <TextInput
-          style={globalStyles.input}
+          style={[globalStyles.input, { color: '#333' }]}
           placeholder="Título"
           value={titulo}
           onChangeText={setTitulo}
           maxLength={100}
         />
         <TextInput
-          style={[globalStyles.input, { height: 80 }]}
+          style={[globalStyles.input, { height: 80 }, { color: '#333' }]}
           placeholder="Descrição (opcional)"
           value={descricao}
           onChangeText={setDescricao}

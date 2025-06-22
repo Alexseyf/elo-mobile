@@ -195,7 +195,7 @@ export default function CadastrarAluno() {
           <View style={styles.formContainer}>
             <Text style={styles.formLabel}>Nome Completo</Text>
             <TextInput 
-              style={styles.input} 
+              style={[globalStyles.input, { color: '#333' }]} 
               placeholder="Digite o nome completo do aluno"
               value={nome}
               onChangeText={setNome}
@@ -355,11 +355,11 @@ export default function CadastrarAluno() {
         </Modal>
         
         <TouchableOpacity 
-          style={styles.backButton} 
+          style={globalStyles.backButton} 
           onPress={handleVoltar}
           disabled={isLoading}
         >
-          <Text style={styles.backButtonText}>Voltar</Text>
+          <Text style={globalStyles.backButtonText}>Voltar</Text>
         </TouchableOpacity>
       </View>
       <Toast />
