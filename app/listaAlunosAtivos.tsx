@@ -8,6 +8,7 @@ import {
   StatusBar,
   ActivityIndicator,
   RefreshControl,
+  Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -213,20 +214,30 @@ export default function ListaAlunosAtivos() {
             <View style={styles.filterContainer}>
               <Text style={styles.filterLabel}>Filtrar por Turma:</Text>
               <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={turmaSelecionada}
-                  onValueChange={(itemValue) => handleChangeTurma(itemValue)}
-                  style={styles.pickerInput}
-                >
-                  <Picker.Item style={styles.pickerInput} label="Todas as turmas" value={null} />
-                  {turmas.map((turma) => (
-                    <Picker.Item
-                      key={turma.id}
-                      label={formatarNomeTurma(turma.nome ?? "")}
-                      value={turma.id}
+                <View style={styles.pickerWrapper}>
+                  <Picker
+                    selectedValue={turmaSelecionada}
+                    onValueChange={(itemValue) => handleChangeTurma(itemValue)}
+                    style={styles.pickerInput}
+                    dropdownIconColor="#333"
+                    mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
+                    prompt="Selecione uma turma"
+                  >
+                    <Picker.Item 
+                      label="Todas as turmas" 
+                      value={null} 
+                      color="#333" 
                     />
-                  ))}
-                </Picker>
+                    {turmas.map((turma) => (
+                      <Picker.Item
+                        key={turma.id}
+                        label={formatarNomeTurma(turma.nome ?? "")}
+                        value={turma.id}
+                        color="#333"
+                      />
+                    ))}
+                  </Picker>
+                </View>
               </View>
             </View>
           )}
@@ -320,6 +331,16 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: 8,
   },
+  pickerWrapper: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    ...Platform.select({
+      android: {
+        elevation: 0,
+        paddingHorizontal: 0,
+      }
+    }),
+  },
   pickerInput: {
     color: "#333",
     backgroundColor: "#fff",
@@ -327,6 +348,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     height: 50,
     width: '100%',
+    ...Platform.select({
+      android: {
+        color: "#333",
+      },
+    }),
   },
   alunoCard: {
     backgroundColor: "#fff",

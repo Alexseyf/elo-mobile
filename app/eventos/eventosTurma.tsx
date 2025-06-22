@@ -9,7 +9,8 @@ import {
   RefreshControl, 
   StatusBar, 
   Modal,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -440,18 +441,21 @@ export default function EventosTurma() {
             {alunosDoResponsavel.length > 1 && (
               <View style={styles.filterRow}>
                 <Text style={styles.filterLabel}>Aluno:</Text>
-                <View style={styles.pickerContainer}>
+                <View style={styles.pickerWrapper}>
                   <Picker
                     selectedValue={alunoSelecionadoId}
-                    style={styles.picker}
+                    style={styles.pickerInput}
                     onValueChange={(itemValue) => handleChangeAluno(itemValue)}
                     dropdownIconColor="#333"
+                    mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
+                    prompt="Selecione um aluno"
                   >
                     {alunosDoResponsavel.map((aluno) => (
                       <Picker.Item
                         key={aluno.id}
                         label={aluno.nome ? aluno.nome.split(' ')[0] : `Aluno ${aluno.id}`}
                         value={aluno.id}
+                        color="#333"
                       />
                     ))}
                   </Picker>
@@ -461,19 +465,26 @@ export default function EventosTurma() {
             
             <View style={styles.filterRow}>
               <Text style={styles.filterLabel}>Mês:</Text>
-              <View style={styles.pickerContainer}>
+              <View style={styles.pickerWrapper}>
                 <Picker
                   selectedValue={mesSelecionado}
-                  style={styles.picker}
+                  style={styles.pickerInput}
                   onValueChange={(itemValue) => handleChangeMes(itemValue)}
                   dropdownIconColor="#333"
+                  mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
+                  prompt="Selecione um mês"
                 >
-                  <Picker.Item label="Todos os meses" value={null} />
+                  <Picker.Item 
+                    label="Todos os meses" 
+                    value={null} 
+                    color="#333"
+                  />
                   {meses.map((mes) => (
                     <Picker.Item
                       key={mes.valor}
                       label={mes.texto}
                       value={mes.valor}
+                      color="#333"
                     />
                   ))}
                 </Picker>
@@ -606,6 +617,32 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     overflow: 'hidden',
+  },
+  pickerWrapper: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    overflow: 'hidden',
+    ...Platform.select({
+      android: {
+        elevation: 0,
+        paddingHorizontal: 0,
+      }
+    }),
+  },
+  pickerInput: {
+    height: 50,
+    backgroundColor: '#fff',
+    color: "#333",
+    fontFamily: "Roboto_Condensed-Regular",
+    fontSize: 16,
+    width: '100%',
+    ...Platform.select({
+      android: {
+        color: "#333",
+      },
+    }),
   },
   picker: {
     height: 50,

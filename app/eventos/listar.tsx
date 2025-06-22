@@ -9,7 +9,8 @@ import {
   RefreshControl, 
   StatusBar, 
   Modal,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -666,41 +667,57 @@ export default function ListarEventos() {
         >
           <View style={styles.filterContainer}>
             <Text style={styles.filterLabel}>Filtrar por Mês:</Text>
-            <View style={styles.pickerContainer}>
+            <View style={styles.pickerWrapper}>
               <Picker
                 selectedValue={mesSelecionado}
                 onValueChange={(itemValue) => handleChangeMes(itemValue)}
                 style={styles.pickerInput}
+                dropdownIconColor="#333"
+                mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
+                prompt="Selecione um mês"
               >
-                <Picker.Item style={styles.pickerInput} label="Todos os meses" value={null} />
+                <Picker.Item 
+                  label="Todos os meses" 
+                  value={null} 
+                  color="#333" 
+                />
                 {meses.map((mes) => (
                   <Picker.Item
                     key={mes.valor}
                     label={mes.texto}
                     value={mes.valor}
+                    color="#333"
                   />
                 ))}
               </Picker>
             </View>
             
             <Text style={styles.filterLabel}>
-              Filtrar por turma: {isAdmin ? '(Todas as turmas disponíveis)' : isProfessor ? '(Apenas suas turmas)' : ''}
+              Filtrar por turma:
             </Text>
-            <View style={styles.pickerContainer}>
+            <View style={styles.pickerWrapper}>
               <Picker
                 selectedValue={turmaId}
                 onValueChange={(itemValue) => handleChangeTurma(itemValue)}
                 style={styles.pickerInput}
+                dropdownIconColor="#333"
+                mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
+                prompt="Selecione uma turma"
               >
                 {/* Se for professor, não exibe a opção "Todas as turmas" */}
                 {!isProfessor && (
-                  <Picker.Item style={styles.pickerInput} label="Todas as turmas" value={null} />
+                  <Picker.Item 
+                    label="Todas as turmas" 
+                    value={null} 
+                    color="#333"
+                  />
                 )}
                 {turmas.map((turma) => (
                   <Picker.Item
                     key={turma.id}
                     label={turma.nome}
                     value={turma.id}
+                    color="#333"
                   />
                 ))}
               </Picker>
@@ -870,17 +887,40 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   pickerContainer: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#e0e0e0",
     marginBottom: 15,
+  },
+  pickerWrapper: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    overflow: 'hidden',
+    marginBottom: 15,
+    ...Platform.select({
+      android: {
+        elevation: 0,
+        paddingHorizontal: 0,
+      }
+    }),
   },
   pickerInput: {
     fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     paddingVertical: 6,
     paddingHorizontal: 10,
+    color: "#333",
+    backgroundColor: "#fff",
+    height: 50,
+    width: '100%',
+    ...Platform.select({
+      android: {
+        color: "#333",
+      },
+    }),
   },
   eventoInfo: {
     flexDirection: "row",
