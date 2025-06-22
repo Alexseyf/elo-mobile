@@ -117,17 +117,18 @@ export default function Index() {
         <View style={globalStyles.inputContainer}>
           <Text style={globalStyles.label}>Email</Text>
           <TextInput
-            style={globalStyles.input}
+            style={[globalStyles.input, { color: '#333' }]}
             placeholder="Digite seu email"
             keyboardType="email-address"
             autoCapitalize="none"
-            placeholderTextColor="#666"            value={email}
+            placeholderTextColor="#666"
+            value={email}
             onChangeText={(text) => setEmail(text.trim())}
           />
           
           <Text style={globalStyles.label}>Senha</Text>
           <TextInput
-            style={globalStyles.input}
+            style={[globalStyles.input, { color: '#333' }]}
             placeholder="Digite sua senha"
             secureTextEntry
             autoCapitalize="none"

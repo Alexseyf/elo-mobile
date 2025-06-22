@@ -390,6 +390,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 48, // Altura consistente
     fontSize: 16,
+    color: '#333',
   },
   icon: {
     marginLeft: 10,

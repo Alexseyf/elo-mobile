@@ -170,7 +170,7 @@ export default function Index() {
               secureTextEntry={!showSenha}
             />
             <TouchableOpacity onPress={() => setShowSenha(!showSenha)} style={styles.icon}>
-              <Feather name={showSenha ? 'eye' : 'eye-off'} size={24} color="#666" />
+              <Feather name={showSenha ? 'eye' : 'eye-off'} size={20} color="#666" />
             </TouchableOpacity>
           </View>
           <View style={styles.passwordContainer}>
@@ -183,7 +183,7 @@ export default function Index() {
               secureTextEntry={!showConfirmarSenha}
             />
             <TouchableOpacity onPress={() => setShowConfirmarSenha(!showConfirmarSenha)} style={styles.icon}>
-              <Feather name={showConfirmarSenha ? 'eye' : 'eye-off'} size={24} color="#666" />
+              <Feather name={showConfirmarSenha ? 'eye' : 'eye-off'} size={20} color="#666" />
             </TouchableOpacity>
           </View>
         </View>
@@ -263,6 +263,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     fontSize: 16,
+    color: '#333',
   },
   icon: {
     marginLeft: 10,

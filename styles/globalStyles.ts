@@ -183,6 +183,14 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 16,
   },
+    formLabelDark: {
+    fontFamily: "Roboto_Condensed-SemiBold",
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 8,
+    marginTop: 16,
+    paddingHorizontal: 5,
+  },
     profileSelection: {
       flexDirection: 'row',
       justifyContent: 'space-between',

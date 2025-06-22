@@ -1,12 +1,21 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Platform, ActivityIndicator } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  StatusBar,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { router, Link } from "expo-router";
 import { useEffect, useState } from "react";
 import Colors from "../constants/colors";
-import config from '@/config';
-import Toast from 'react-native-toast-message';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import globalStyles from '../../styles/globalStyles';
-import { obterPrimeiroNome } from '../utils/formatText';
+import config from "@/config";
+import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import globalStyles from "../../styles/globalStyles";
+import { obterPrimeiroNome } from "../utils/formatText";
 
 export default function RespDash() {
   const [loading, setLoading] = useState(true);
@@ -15,129 +24,134 @@ export default function RespDash() {
 
   const fetchResponsavelId = async () => {
     try {
-      const storedUserId = await AsyncStorage.getItem('@user_id');
-      const authToken = await AsyncStorage.getItem('@auth_token');
-      
+      const storedUserId = await AsyncStorage.getItem("@user_id");
+      const authToken = await AsyncStorage.getItem("@auth_token");
+
       if (!authToken) {
         Toast.show({
-          type: 'error',
-          text1: 'Erro de autenticação',
-          text2: 'Sessão expirada. Por favor, faça login novamente.',
-          visibilityTime: 3000
+          type: "error",
+          text1: "Erro de autenticação",
+          text2: "Sessão expirada. Por favor, faça login novamente.",
+          visibilityTime: 3000,
         });
         setTimeout(() => {
-          router.replace('/');
+          router.replace("/");
         }, 3000);
         return null;
       }
-      
+
       if (storedUserId) {
         const userId = parseInt(storedUserId, 10);
         setResponsavelId(userId);
-        
-        const userDataString = await AsyncStorage.getItem('@user_data');
+
+        const userDataString = await AsyncStorage.getItem("@user_data");
         if (userDataString) {
           const userData = JSON.parse(userDataString);
           setNome(obterPrimeiroNome(userData.nome));
         }
-        
+
         setLoading(false);
         return userId;
       }
 
       const response = await fetch(`${config.API_URL}/usuario-logado`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
       });
-      
+
       if (response.ok) {
         const userData = await response.json();
 
-        if (userData.roles && Array.isArray(userData.roles) && !userData.roles.includes('RESPONSAVEL')) {
+        if (
+          userData.roles &&
+          Array.isArray(userData.roles) &&
+          !userData.roles.includes("RESPONSAVEL")
+        ) {
           Toast.show({
-            type: 'error',
-            text1: 'Acesso negado',
-            text2: 'Você não possui permissão para acessar esta área',
-            visibilityTime: 3000
+            type: "error",
+            text1: "Acesso negado",
+            text2: "Você não possui permissão para acessar esta área",
+            visibilityTime: 3000,
           });
           setTimeout(() => {
-            router.replace('/');
+            router.replace("/");
           }, 3000);
           return null;
         }
-        
-        await AsyncStorage.setItem('@user_id', userData.id.toString());
+
+        await AsyncStorage.setItem("@user_id", userData.id.toString());
         setResponsavelId(userData.id);
         setNome(obterPrimeiroNome(userData.nome));
         setLoading(false);
         return userData.id;
       } else if (response.status === 401) {
-        await AsyncStorage.removeItem('@auth_token');
-        await AsyncStorage.removeItem('@user_id');
-        await AsyncStorage.removeItem('@user_data');
-        
+        await AsyncStorage.removeItem("@auth_token");
+        await AsyncStorage.removeItem("@user_id");
+        await AsyncStorage.removeItem("@user_data");
+
         Toast.show({
-          type: 'error',
-          text1: 'Sessão expirada',
-          text2: 'Por favor, faça login novamente',
-          visibilityTime: 3000
+          type: "error",
+          text1: "Sessão expirada",
+          text2: "Por favor, faça login novamente",
+          visibilityTime: 3000,
         });
         setTimeout(() => {
-          router.replace('/');
+          router.replace("/");
         }, 3000);
         return null;
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Erro de autenticação',
-          text2: 'Não foi possível recuperar seus dados. Por favor, faça login novamente.',
-          visibilityTime: 3000
+          type: "error",
+          text1: "Erro de autenticação",
+          text2:
+            "Não foi possível recuperar seus dados. Por favor, faça login novamente.",
+          visibilityTime: 3000,
         });
         setTimeout(() => {
-          router.replace('/');
+          router.replace("/");
         }, 3000);
         return null;
       }
     } catch (error) {
-      console.error('Erro ao buscar dados do responsável:', error);
+      console.error("Erro ao buscar dados do responsável:", error);
       Toast.show({
-        type: 'error',
-        text1: 'Erro de conexão',
-        text2: 'Não foi possível conectar ao servidor',
-        visibilityTime: 3000
+        type: "error",
+        text1: "Erro de conexão",
+        text2: "Não foi possível conectar ao servidor",
+        visibilityTime: 3000,
       });
       setLoading(false);
       return null;
     }
   };
- 
+
   useEffect(() => {
     fetchResponsavelId();
   }, []);
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('@auth_token');
-      await AsyncStorage.removeItem('@user_id');
-      await AsyncStorage.removeItem('@user_data');
+      await AsyncStorage.removeItem("@auth_token");
+      await AsyncStorage.removeItem("@user_id");
+      await AsyncStorage.removeItem("@user_data");
 
       Toast.show({
-        type: 'success',
-        text1: 'Logout realizado com sucesso',
-        visibilityTime: 2000
+        type: "success",
+        text1: "Logout realizado com sucesso",
+        visibilityTime: 2000,
       });
 
-      router.replace('/');
+      router.replace("/");
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error("Erro ao fazer logout:", error);
       Toast.show({
-        type: 'error',
-        text1: 'Erro ao sair',
-        text2: 'Tente novamente',
-        visibilityTime: 3000
+        type: "error",
+        text1: "Erro ao sair",
+        text2: "Tente novamente",
+        visibilityTime: 3000,
       });
     }
   };
@@ -157,28 +171,28 @@ export default function RespDash() {
       <StatusBar hidden barStyle="light-content" />
 
       <View style={globalStyles.header}>
-        <Text style={globalStyles.subtitle}>Olá, {nome || 'Responsável'}!</Text>
+        <Text style={globalStyles.subtitle}>Olá, {nome || "Responsável"}!</Text>
       </View>
 
       <ScrollView
         style={globalStyles.scrollContent}
         contentContainerStyle={styles.scrollContentContainer}
-      >        
+      >
         <View style={styles.cardsContainer}>
-          <TouchableOpacity 
-            style={globalStyles.card}            
+          <TouchableOpacity
+            style={globalStyles.card}
             onPress={() => {
               if (responsavelId) {
                 router.push({
                   pathname: "/responsaveis/alunosDiarios",
-                  params: { responsavelId: responsavelId }
+                  params: { responsavelId: responsavelId },
                 });
               } else {
                 Toast.show({
-                  type: 'error',
-                  text1: 'Erro',
-                  text2: 'Não foi possível identificar o responsável',
-                  visibilityTime: 3000
+                  type: "error",
+                  text1: "Erro",
+                  text2: "Não foi possível identificar o responsável",
+                  visibilityTime: 3000,
                 });
               }
             }}
@@ -187,24 +201,28 @@ export default function RespDash() {
               <Text style={globalStyles.cardEmoji}>📓</Text>
               <View style={globalStyles.cardTextContainer}>
                 <Text style={globalStyles.cardTitle}>Diários</Text>
-                <Text style={globalStyles.cardDescription}>Visualizar diários</Text>
+                <Text style={globalStyles.cardDescription}>
+                  Visualizar diários
+                </Text>
               </View>
             </View>
           </TouchableOpacity>
 
-          <Link href="../calendario/calendario" asChild>
+          {/* <Link href="../calendario/calendario" asChild>
             <TouchableOpacity style={globalStyles.card}>
               <View style={globalStyles.cardContent}>
                 <Text style={globalStyles.cardEmoji}>📅</Text>
                 <View style={globalStyles.cardTextContainer}>
                   <Text style={globalStyles.cardTitle}>Calendário</Text>
-                  <Text style={globalStyles.cardDescription}>Cronograma e eventos escolares</Text>
+                  <Text style={globalStyles.cardDescription}>
+                    Cronograma e eventos escolares
+                  </Text>
                 </View>
               </View>
             </TouchableOpacity>
-          </Link>
+          </Link> */}
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={globalStyles.card}
             onPress={() => {
               router.push("/cronograma/listar");
@@ -213,15 +231,34 @@ export default function RespDash() {
             <View style={globalStyles.cardContent}>
               <Text style={globalStyles.cardEmoji}>🗓️</Text>
               <View style={globalStyles.cardTextContainer}>
-                <Text style={globalStyles.cardTitle}>Cronograma</Text>
-                <Text style={globalStyles.cardDescription}>Visualizar cronograma escolar</Text>
+                <Text style={globalStyles.cardTitle}>Cronograma Anual</Text>
+                <Text style={globalStyles.cardDescription}>
+                  Visualizar cronograma escolar
+                </Text>
               </View>
             </View>
           </TouchableOpacity>
+
+          <Link href="/eventos/eventosTurma" asChild>
+            <TouchableOpacity style={globalStyles.card}>
+              <View style={globalStyles.cardContent}>
+                <Text style={globalStyles.cardEmoji}>🗓️</Text>
+                <View style={globalStyles.cardTextContainer}>
+                  <Text style={globalStyles.cardTitle}>Eventos da turma</Text>
+                  <Text style={globalStyles.cardDescription}>
+                    Acessar eventos das turmas
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Link>
         </View>
       </ScrollView>
-      
-      <TouchableOpacity style={globalStyles.logoutButton} onPress={handleLogout}>
+
+      <TouchableOpacity
+        style={globalStyles.logoutButton}
+        onPress={handleLogout}
+      >
         <Text style={globalStyles.logoutButtonText}>Sair</Text>
       </TouchableOpacity>
       <Toast />
@@ -232,7 +269,7 @@ export default function RespDash() {
 const styles = StyleSheet.create({
   scrollContentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 30,
+    paddingBottom: Platform.OS === "ios" ? 40 : 30,
   },
   cardsContainer: {
     marginTop: 0,
