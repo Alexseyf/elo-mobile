@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 16,
-    color: '#4a90e2',
+    color: '#e1e1e1',
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'right',
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   },
   sleepValue: {
     fontSize: 14,
-    color: '#4a90e2',
+    color: '#e1e1e1',
     fontWeight: '600',
   },
   noDataText: {

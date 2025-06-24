@@ -5,6 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Toast from 'react-native-toast-message';
 import config from '../config';
 import Colors from "./constants/colors";
+import globalStyles from '../styles/globalStyles';
 
 interface PeriodoSono {
   id: number;
@@ -150,27 +151,27 @@ export default function VisualizarDiario() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.container}>
       <StatusBar hidden />
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Diário do Aluno</Text>
-        <Text style={styles.headerSubtitle}>{alunoNome}</Text>
+      <View style={globalStyles.header}>
+        <Text style={globalStyles.headerTitle}>Diário do Aluno</Text>
+        <Text style={globalStyles.headerSubtitle}>{alunoNome}</Text>
       </View>
 
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <View style={globalStyles.loadingContainer}>
           <ActivityIndicator size="large" color="#fff" />
-          <Text style={styles.loadingText}>Carregando diários...</Text>
+          <Text style={globalStyles.loadingText}>Carregando diários...</Text>
         </View>
       ) : (
         <ScrollView
-          style={styles.scrollContent}
-          contentContainerStyle={styles.scrollContentContainer}
+          style={globalStyles.scrollContent}
+          contentContainerStyle={globalStyles.scrollContentContainer}
         >
           {diarios.length === 0 ? (
-            <View style={styles.emptyContainer}>
+            <View style={globalStyles.emptyContainer}>
               <MaterialIcons name="book" size={60} color="#fff" />
-              <Text style={styles.emptyText}>Nenhum diário encontrado para este aluno</Text>
+              <Text style={globalStyles.emptyText}>Nenhum diário encontrado para este aluno</Text>
             </View>
           ) : (
             <>
@@ -289,8 +290,8 @@ export default function VisualizarDiario() {
         </ScrollView>
       )}
 
-      <TouchableOpacity style={styles.backButton} onPress={handleVoltar}>
-        <Text style={styles.backButtonText}>Voltar</Text>
+      <TouchableOpacity style={globalStyles.backButton} onPress={handleVoltar}>
+        <Text style={globalStyles.backButtonText}>Voltar</Text>
       </TouchableOpacity>
       <Toast />
     </View>
@@ -310,11 +311,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 22,
     fontWeight: "bold",
     color: "#fff",
   },
   headerSubtitle: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
     color: "#fff",
     marginTop: 4,
@@ -365,13 +368,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   diarioDateText: {
+    fontFamily: "Roboto_Condensed-Regular",
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '500',
   },
   diarioDateTextSelected: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     color: Colors.blue_btn,
-    fontWeight: '700',
   },
   diarioContainer: {
     backgroundColor: '#ffffff',
@@ -383,8 +386,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 18,
-    fontWeight: 'bold',
     color: Colors.blue_btn,
     marginBottom: 10,
     borderBottomWidth: 1,
@@ -395,15 +398,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 6,
-  },
-  infoLabel: {
-    width: '40%',
+  },  infoLabel: {
+    fontFamily: "Roboto_Condensed-SemiBold",
+    width: '60%',
     fontSize: 15,
     color: '#555',
-    fontWeight: '500',
-  },
-  infoValue: {
-    fontSize: 15,
+  },  infoValue: {
+    fontFamily: "Roboto_Condensed-Light",
+    width: '40%',
+    fontSize: 14,
     color: '#333',
     flex: 1,
   },
@@ -414,16 +417,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   periodoSonoText: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 14,
     color: '#333',
   },
   periodoSonoTotal: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 14,
     color: '#333',
     marginTop: 4,
   },
   boldText: {
-    fontWeight: '600',
+    fontFamily: "Roboto_Condensed-SemiBold",
   },
   itensContainer: {
     flexDirection: 'row',
@@ -440,6 +445,7 @@ const styles = StyleSheet.create({
     borderColor: '#cce5ff',
   },
   itemTagText: {
+    fontFamily: "Roboto_Condensed-Regular",
     color: Colors.blue_btn,
     fontSize: 14,
   },
@@ -449,34 +455,15 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   observacoesText: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 14,
     color: '#333',
     lineHeight: 20,
   },
   registroText: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 12,
     color: '#777',
     textAlign: 'right',
-    fontStyle: 'italic',
   },
-  backButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    paddingVertical: 14,
-    marginHorizontal: 16,
-    marginTop: 10,
-    marginBottom: Platform.OS === 'ios' ? 80 : 60,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.blue_btn,
-  }
 });

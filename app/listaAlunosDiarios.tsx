@@ -6,6 +6,7 @@ import Toast from 'react-native-toast-message';
 import { formatarNome } from "./utils/formatText";
 import Colors from "./constants/colors";
 import config from '../config';
+import globalStyles from '../styles/globalStyles';
 
 interface Aluno {
   id: number;
@@ -80,37 +81,37 @@ export default function ListaAlunosDiarios() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.container}>
       <StatusBar hidden />
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>
+      <View style={globalStyles.header}>
+        <Text style={globalStyles.headerTitle}>
           {nomeTurma || `Turma ${turmaId}`}
         </Text>
-        <Text style={styles.headerSubtitle}>
+        <Text style={globalStyles.headerSubtitle}>
           Diários dos Alunos
         </Text>
       </View>
 
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <View style={globalStyles.loadingContainer}>
           <ActivityIndicator size="large" color="#fff" />
-          <Text style={styles.loadingText}>Carregando alunos...</Text>
+          <Text style={globalStyles.loadingText}>Carregando alunos...</Text>
         </View>
       ) : (
         <ScrollView 
-          style={styles.scrollContent}
-          contentContainerStyle={styles.scrollContentContainer}
+          style={globalStyles.scrollContent}
+          contentContainerStyle={globalStyles.scrollContentContainer}
         >
           {alunos.length === 0 ? (
-            <View style={styles.emptyContainer}>
+            <View style={globalStyles.emptyContainer}>
               <MaterialIcons name="person-search" size={60} color="#fff" />
-              <Text style={styles.emptyText}>Nenhum aluno encontrado nesta turma</Text>
+              <Text style={globalStyles.emptyText}>Nenhum aluno encontrado nesta turma</Text>
             </View>
           ) : (
             alunos.map((aluno) => (
               <TouchableOpacity 
                 key={aluno.id} 
-                style={styles.alunoCard}
+                style={globalStyles.alunoCard}
                 onPress={() => navegarParaDiarioAluno(aluno.id, aluno.nome)}
               >
                 <View style={styles.alunoInfo}>
@@ -132,8 +133,8 @@ export default function ListaAlunosDiarios() {
         </ScrollView>
       )}
 
-      <TouchableOpacity style={styles.backButton} onPress={handleVoltar}>
-        <Text style={styles.backButtonText}>Voltar</Text>
+      <TouchableOpacity style={globalStyles.backButton} onPress={handleVoltar}>
+        <Text style={globalStyles.backButtonText}>Voltar</Text>
       </TouchableOpacity>
       <Toast />
     </View>
@@ -141,59 +142,6 @@ export default function ListaAlunosDiarios() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.blue_btn,
-  },
-  header: {
-    backgroundColor: Colors.blue_btn,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: "#fff",
-    marginTop: 4,
-    opacity: 0.8,
-  },
-  scrollContent: {
-    flex: 1,
-  },
-  scrollContentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 30,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#fff',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60,
-  },
-  emptyText: {
-    fontSize: 18,
-    color: '#fff',
-    marginTop: 16,
-    textAlign: 'center',
-    paddingHorizontal: 20,
-  },
   alunoCard: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -219,37 +167,17 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   alunoAvatarText: {
+    fontFamily: 'Roboto_Condensed-SemiBold',
     color: '#fff',
     fontSize: 20,
-    fontWeight: 'bold',
   },
   alunoDetails: {
     flex: 1,
   },
   alunoNome: {
+    fontFamily: "Roboto_Condensed-Regular",
     fontSize: 18,
-    fontWeight: "600",
     color: "#333",
     marginBottom: 4,
   },
-  backButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    paddingVertical: 14,
-    marginHorizontal: 16,
-    marginTop: 10,
-    marginBottom: Platform.OS === 'ios' ? 80 : 60,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.blue_btn,
-  }
 });

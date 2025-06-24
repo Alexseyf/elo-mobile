@@ -9,20 +9,37 @@ import {
   Image,
   StatusBar,
 } from "react-native";
-import { Link, useLocalSearchParams } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
 import Toast from "react-native-toast-message";
 import config from "../config";
+import globalStyles from '../styles/globalStyles';
+import { Feather } from '@expo/vector-icons';
 
 export default function Index() {
-  const { email } = useLocalSearchParams();
-  const [code, setCode] = useState("");
-  const [senha, setSenha] = useState("");
+  const params = useLocalSearchParams();
+  const email = typeof params.email === 'string' ? params.email : '';
+  const [code, setCode] = useState('');
+  const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [showSenha, setShowSenha] = useState(false);
+  const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
   const router = useRouter();
+  
+  const handleVoltar = () => {
+    router.back();
+  };
 
   const handlePassword = async () => {
+    if (senha !== confirmarSenha) {
+      Toast.show({
+        type: "error",
+        text1: "As senhas não conferem",
+        text2: "Por favor, verifique a nova senha e a confirmação.",
+      });
+      return;
+    }
+
     try {
       if (code === "") {
         Toast.show({
@@ -76,14 +93,15 @@ export default function Index() {
         } catch (parseError) {
           errorMessage = "Erro ao processar a resposta do servidor";
         }
-      }
-
-      if (response.status === 200) {
-        router.push("/");
+      }      if (response.status === 200) {
         Toast.show({
           type: "success",
           text1: "Senha alterada com sucesso!",
         });
+
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       } else if (response.status === 400) {
         Toast.show({
           type: "error",
@@ -124,13 +142,9 @@ export default function Index() {
       });
     }
   };
-
   return (
     <View style={styles.container}>
       <StatusBar hidden />
-      <Link href="/" style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={24} color="#fff" />
-      </Link>
       <View style={styles.formContainer}>
         <Image
           source={require("../assets/images/logo.png")}
@@ -146,21 +160,42 @@ export default function Index() {
             value={code}
             onChangeText={setCode}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Digite a nova senha"
-            keyboardType="visible-password"
-            placeholderTextColor="#666"
-            value={senha}
-            onChangeText={setSenha}
-            secureTextEntry={true}
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Digite a nova senha"
+              placeholderTextColor="#666"
+              value={senha}
+              onChangeText={setSenha}
+              secureTextEntry={!showSenha}
+            />
+            <TouchableOpacity onPress={() => setShowSenha(!showSenha)} style={styles.icon}>
+              <Feather name={showSenha ? 'eye' : 'eye-off'} size={20} color="#666" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Confirme a nova senha"
+              placeholderTextColor="#666"
+              value={confirmarSenha}
+              onChangeText={setConfirmarSenha}
+              secureTextEntry={!showConfirmarSenha}
+            />
+            <TouchableOpacity onPress={() => setShowConfirmarSenha(!showConfirmarSenha)} style={styles.icon}>
+              <Feather name={showConfirmarSenha ? 'eye' : 'eye-off'} size={20} color="#666" />
+            </TouchableOpacity>
+          </View>
         </View>
-
+        
         <TouchableOpacity style={styles.button} onPress={handlePassword}>
           <Text style={styles.buttonText}>Enviar</Text>
         </TouchableOpacity>
       </View>
+      
+      <TouchableOpacity style={globalStyles.backButton} onPress={handleVoltar}>
+        <Text style={globalStyles.backButtonText}>Voltar</Text>
+      </TouchableOpacity>
       <Toast />
     </View>
   );
@@ -176,23 +211,17 @@ const styles = StyleSheet.create({
     top: 40,
     left: 20,
     zIndex: 1,
-    padding: 10,
   },
   formContainer: {
     flex: 1,
-    justifyContent: "flex-start",
-    paddingHorizontal: 20,
-    backgroundColor: "#2a4674",
-    marginTop: 10,
-    marginHorizontal: 20,
-    marginBottom: 20,
+    // justifyContent: "center",
+    paddingHorizontal: 40,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 8,
+  logo: {
+    width: 200,
+    height: 200,
+    alignSelf: "center",
+    marginBottom: 20,
   },
   inputContainer: {
     marginBottom: 20,
@@ -215,14 +244,28 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
+    fontFamily: "Roboto-Condesed-Regular",
     color: "white",
     fontSize: 16,
-    fontWeight: "600",
   },
-  logo: {
-    width: 200,
-    height: 200,
-    alignSelf: "center",
-    marginBottom: 10,
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e1e1e1',
+    marginBottom: 15,
+    height: 50,
+    paddingHorizontal: 15,
+  },
+  passwordInput: {
+    flex: 1,
+    height: '100%',
+    fontSize: 16,
+    color: '#333',
+  },
+  icon: {
+    marginLeft: 10,
   },
 });

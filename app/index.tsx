@@ -24,6 +24,7 @@ export default function Index() {
       }
       
       setIsLoading(true);
+        const emailSemEspacos = email.trim();
       
       const response = await fetch(`${config.API_URL}/login`, {
         method: 'POST',
@@ -31,7 +32,7 @@ export default function Index() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: email,
+          email: emailSemEspacos,
           senha: senha
         }),
       });
@@ -108,7 +109,7 @@ export default function Index() {
 
   return (
     <View style={globalStyles.container}>
-      <StatusBar backgroundColor="#2a4674" barStyle="light-content" />
+      <StatusBar hidden barStyle="light-content" />
       
       <View style={globalStyles.formContainer}>
         <Image source={require("../assets/images/logo.png")} style={styles.logo} />
@@ -116,18 +117,18 @@ export default function Index() {
         <View style={globalStyles.inputContainer}>
           <Text style={globalStyles.label}>Email</Text>
           <TextInput
-            style={globalStyles.input}
+            style={[globalStyles.input, { color: '#333' }]}
             placeholder="Digite seu email"
             keyboardType="email-address"
             autoCapitalize="none"
             placeholderTextColor="#666"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => setEmail(text.trim())}
           />
           
           <Text style={globalStyles.label}>Senha</Text>
           <TextInput
-            style={globalStyles.input}
+            style={[globalStyles.input, { color: '#333' }]}
             placeholder="Digite sua senha"
             secureTextEntry
             autoCapitalize="none"
@@ -165,8 +166,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   forgotPasswordText: {
+    fontFamily: "Roboto_Condensed-Regular",
     color: "#e1e1e1",
-    fontSize: 14,
+    fontSize: 16,
     textDecorationLine: "underline",
     textAlign: "center",
   },
@@ -175,6 +177,7 @@ const styles = StyleSheet.create({
     height: 200,
     alignSelf: 'center',
     marginBottom: 10,
+    marginTop: 80
   },
   buttonDisabled: {
     backgroundColor: '#c8c8c8',

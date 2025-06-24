@@ -1,209 +1,277 @@
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, ScrollView, Platform, ActivityIndicator } from "react-native";
-import { Link, router } from "expo-router";
+import {
+  Text,
+  View,
+  StyleSheet,
+  StatusBar,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
+import { router, Link } from "expo-router";
 import { useEffect, useState } from "react";
 import Colors from "../constants/colors";
-import { formatarNomeTurma } from "../utils/formatText";
-import config from '@/config';
-import Toast from 'react-native-toast-message';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from "@/config";
+import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import globalStyles from "../../styles/globalStyles";
+import { obterPrimeiroNome } from "../utils/formatText";
 
 export default function RespDash() {
-  const [alunos, setAlunos] = useState<Aluno[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [responsavelId, setResponsavelId] = useState<number | null>(null);
- 
-  type Aluno = {
-    id: number;
-    nome: string;
-    turma: {
-      id: number;
-      nome: string;
-    };
-  };
+  const [nome, setNome] = useState("");
 
   const fetchResponsavelId = async () => {
     try {
-      const storedUserId = await AsyncStorage.getItem('@user_id');
-      const authToken = await AsyncStorage.getItem('@auth_token');
-      
+      const storedUserId = await AsyncStorage.getItem("@user_id");
+      const authToken = await AsyncStorage.getItem("@auth_token");
+
       if (!authToken) {
         Toast.show({
-          type: 'error',
-          text1: 'Erro de autenticação',
-          text2: 'Sessão expirada. Por favor, faça login novamente.',
-          visibilityTime: 3000
+          type: "error",
+          text1: "Erro de autenticação",
+          text2: "Sessão expirada. Por favor, faça login novamente.",
+          visibilityTime: 3000,
         });
         setTimeout(() => {
-          router.replace('/');
+          router.replace("/");
         }, 3000);
         return null;
       }
-      
+
       if (storedUserId) {
         const userId = parseInt(storedUserId, 10);
         setResponsavelId(userId);
+
+        const userDataString = await AsyncStorage.getItem("@user_data");
+        if (userDataString) {
+          const userData = JSON.parse(userDataString);
+          setNome(obterPrimeiroNome(userData.nome));
+        }
+
+        setLoading(false);
         return userId;
       }
 
       const response = await fetch(`${config.API_URL}/usuario-logado`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
       });
-      
+
       if (response.ok) {
         const userData = await response.json();
 
-        if (userData.roles && Array.isArray(userData.roles) && !userData.roles.includes('RESPONSAVEL')) {
+        if (
+          userData.roles &&
+          Array.isArray(userData.roles) &&
+          !userData.roles.includes("RESPONSAVEL")
+        ) {
           Toast.show({
-            type: 'error',
-            text1: 'Acesso negado',
-            text2: 'Você não possui permissão para acessar esta área',
-            visibilityTime: 3000
+            type: "error",
+            text1: "Acesso negado",
+            text2: "Você não possui permissão para acessar esta área",
+            visibilityTime: 3000,
           });
           setTimeout(() => {
-            router.replace('/');
+            router.replace("/");
           }, 3000);
           return null;
         }
-        
-        await AsyncStorage.setItem('@user_id', userData.id.toString());
-        
+
+        await AsyncStorage.setItem("@user_id", userData.id.toString());
         setResponsavelId(userData.id);
+        setNome(obterPrimeiroNome(userData.nome));
+        setLoading(false);
         return userData.id;
       } else if (response.status === 401) {
-        await AsyncStorage.removeItem('@auth_token');
-        await AsyncStorage.removeItem('@user_id');
-        await AsyncStorage.removeItem('@user_data');
-        
+        await AsyncStorage.removeItem("@auth_token");
+        await AsyncStorage.removeItem("@user_id");
+        await AsyncStorage.removeItem("@user_data");
+
         Toast.show({
-          type: 'error',
-          text1: 'Sessão expirada',
-          text2: 'Por favor, faça login novamente',
-          visibilityTime: 3000
+          type: "error",
+          text1: "Sessão expirada",
+          text2: "Por favor, faça login novamente",
+          visibilityTime: 3000,
         });
         setTimeout(() => {
-          router.replace('/');
+          router.replace("/");
         }, 3000);
         return null;
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Erro de autenticação',
-          text2: 'Não foi possível recuperar seus dados. Por favor, faça login novamente.',
-          visibilityTime: 3000
+          type: "error",
+          text1: "Erro de autenticação",
+          text2:
+            "Não foi possível recuperar seus dados. Por favor, faça login novamente.",
+          visibilityTime: 3000,
         });
         setTimeout(() => {
-          router.replace('/');
+          router.replace("/");
         }, 3000);
         return null;
       }
     } catch (error) {
-      console.error('Erro ao buscar dados do responsável:', error);
+      console.error("Erro ao buscar dados do responsável:", error);
       Toast.show({
-        type: 'error',
-        text1: 'Erro de conexão',
-        text2: 'Não foi possível conectar ao servidor',
-        visibilityTime: 3000
+        type: "error",
+        text1: "Erro de conexão",
+        text2: "Não foi possível conectar ao servidor",
+        visibilityTime: 3000,
       });
+      setLoading(false);
       return null;
     }
   };
- 
+
   useEffect(() => {
     fetchResponsavelId();
   }, []);
 
-  return (
-    <View style={styles.container}>
-      <StatusBar hidden />
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Responsáveis Dashboard</Text>
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("@auth_token");
+      await AsyncStorage.removeItem("@user_id");
+      await AsyncStorage.removeItem("@user_data");
+
+      Toast.show({
+        type: "success",
+        text1: "Logout realizado com sucesso",
+        visibilityTime: 2000,
+      });
+
+      router.replace("/");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      Toast.show({
+        type: "error",
+        text1: "Erro ao sair",
+        text2: "Tente novamente",
+        visibilityTime: 3000,
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={[globalStyles.container, globalStyles.loadingContainer]}>
+        <StatusBar hidden barStyle="light-content" />
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={globalStyles.loadingText}>Carregando...</Text>
       </View>
+    );
+  }
+
+  return (
+    <View style={globalStyles.container}>
+      <StatusBar hidden barStyle="light-content" />
+
+      <View style={globalStyles.header}>
+        <Text style={globalStyles.subtitle}>Olá, {nome || "Responsável"}!</Text>
+      </View>
+
+      <ScrollView
+        style={globalStyles.scrollContent}
+        contentContainerStyle={styles.scrollContentContainer}
+      >
+        <View style={styles.cardsContainer}>
+          <TouchableOpacity
+            style={globalStyles.card}
+            onPress={() => {
+              if (responsavelId) {
+                router.push({
+                  pathname: "/responsaveis/alunosDiarios",
+                  params: { responsavelId: responsavelId },
+                });
+              } else {
+                Toast.show({
+                  type: "error",
+                  text1: "Erro",
+                  text2: "Não foi possível identificar o responsável",
+                  visibilityTime: 3000,
+                });
+              }
+            }}
+          >
+            <View style={globalStyles.cardContent}>
+              <Text style={globalStyles.cardEmoji}>📓</Text>
+              <View style={globalStyles.cardTextContainer}>
+                <Text style={globalStyles.cardTitle}>Diários</Text>
+                <Text style={globalStyles.cardDescription}>
+                  Visualizar diários
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* <Link href="../calendario/calendario" asChild>
+            <TouchableOpacity style={globalStyles.card}>
+              <View style={globalStyles.cardContent}>
+                <Text style={globalStyles.cardEmoji}>📅</Text>
+                <View style={globalStyles.cardTextContainer}>
+                  <Text style={globalStyles.cardTitle}>Calendário</Text>
+                  <Text style={globalStyles.cardDescription}>
+                    Cronograma e eventos escolares
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Link> */}
+
+          <TouchableOpacity
+            style={globalStyles.card}
+            onPress={() => {
+              router.push("/cronograma/listar");
+            }}
+          >
+            <View style={globalStyles.cardContent}>
+              <Text style={globalStyles.cardEmoji}>🗓️</Text>
+              <View style={globalStyles.cardTextContainer}>
+                <Text style={globalStyles.cardTitle}>Cronograma Anual</Text>
+                <Text style={globalStyles.cardDescription}>
+                  Visualizar cronograma escolar
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          <Link href="/eventos/eventosTurma" asChild>
+            <TouchableOpacity style={globalStyles.card}>
+              <View style={globalStyles.cardContent}>
+                <Text style={globalStyles.cardEmoji}>🗓️</Text>
+                <View style={globalStyles.cardTextContainer}>
+                  <Text style={globalStyles.cardTitle}>Eventos da turma</Text>
+                  <Text style={globalStyles.cardDescription}>
+                    Acessar eventos das turmas
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </ScrollView>
+
+      <TouchableOpacity
+        style={globalStyles.logoutButton}
+        onPress={handleLogout}
+      >
+        <Text style={globalStyles.logoutButtonText}>Sair</Text>
+      </TouchableOpacity>
+      <Toast />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#2a4674",
+  scrollContentContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: Platform.OS === "ios" ? 40 : 30,
   },
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    zIndex: 1,
-    padding: 10,
-  },
-  formContainer: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 20,
-    backgroundColor: "#2a4674",
-    marginTop: 10,
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#e1e1e1",
-    textAlign: "center",
-    marginBottom: 30,
-  },
-  
-  label: {
-    fontSize: 14,
-    color: "#fff",
-    marginBottom: 8,
-    fontWeight: "500",
-  },
-  input: {
-    height: 50,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#e1e1e1",
-  },
-  button: {
-    backgroundColor: "#4a90e2",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  forgotPassword: {
-    marginTop: 15,
-    width: "100%",
-    textAlign: "center",
-  },
-  forgotPasswordText: {
-    color: "#e1e1e1",
-    fontSize: 14,
-    textDecorationLine: "underline",
-    textAlign: "center",
-  },
-  logo: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center',
-    marginBottom: 10,
+  cardsContainer: {
+    marginTop: 0,
   },
 });

@@ -6,19 +6,25 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
-import { Link, router } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useState } from 'react';
 import Toast from "react-native-toast-message";
 import config from '../config';
+import globalStyles from '../styles/globalStyles';
 
 export default function Index() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  
+  const handleVoltar = () => {
+    router.back();
+  };
 
   const handleEmail = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `${config.API_URL}/recupera-senha`,
@@ -28,29 +34,30 @@ export default function Index() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: email,
+            email: email.trim(),
           }),
         }
       );
 
-      if (email === "") {
+      if (email.trim() === "") {
         Toast.show({
           type: "error",
           text1: "Campo obrigatório",
           text2: "Preencha o campo de email",
         });
         return;
-      }
-
-      if (response.status === 200) {
-        router.push({
-          pathname: "../enviaCodigoSenha",
-          params: { email },
-        });
+      }      if (response.status === 200) {
         Toast.show({
           type: "success",
           text1: "Email enviado com sucesso!",
         });
+        
+        setTimeout(() => {
+          router.push({
+            pathname: "../enviaCodigoSenha",
+            params: { email: email.trim() },
+          });
+        }, 2000);
       } else {
         Toast.show({
           type: "error",
@@ -63,16 +70,14 @@ export default function Index() {
         type: "error",
         text1: "Erro ao conectar com o servidor",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
-
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.container}>
       <StatusBar hidden />
-      <Link href="/" style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={24} color="#fff" />
-      </Link>
-      <View style={styles.formContainer}>
+      <View style={globalStyles.formContainer}>
         <Image
           source={require("../assets/images/logo.png")}
           style={styles.logo}
@@ -86,50 +91,43 @@ export default function Index() {
             placeholder="Digite seu email"
             keyboardType="email-address"
             autoCapitalize="none"
-            placeholderTextColor="#666"
+            placeholderTextColor="#666"            
             value={email}
             onChangeText={setEmail}
           />
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleEmail}>
-          <Text style={styles.buttonText}>Enviar</Text>
+        
+        <TouchableOpacity 
+          style={[globalStyles.button, isLoading && styles.buttonDisabled]} 
+          onPress={handleEmail}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={globalStyles.buttonText}>Enviar</Text>
+          )}
         </TouchableOpacity>
       </View>
+      
+      <TouchableOpacity style={globalStyles.backButton} onPress={handleVoltar}>
+        <Text style={globalStyles.backButtonText}>Voltar</Text>
+      </TouchableOpacity>
       <Toast />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#2a4674",
-  },
-  backButton: {
-    position: "absolute",
-    top: 40,
-    left: 20,
-    zIndex: 1,
-    padding: 10,
-  },
-  formContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    paddingHorizontal: 20,
-    backgroundColor: "#2a4674",
-    marginTop: 10,
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
+const styles = StyleSheet.create({  
   title: {
+    fontFamily: "Roboto-Condesed-SemiBold",
     fontSize: 24,
-    fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
+    fontFamily: "Roboto-Condesed-SemiBold",
     fontSize: 16,
     color: "#e1e1e1",
     textAlign: "center",
@@ -139,10 +137,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
+    fontFamily: "Roboto-Condesed-Regular",
     fontSize: 14,
     color: "#fff",
     marginBottom: 8,
-    fontWeight: "500",
   },
   input: {
     height: 50,
@@ -162,9 +160,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
+    fontFamily: "Roboto-Condesed-Regular",
     color: "white",
     fontSize: 16,
-    fontWeight: "600",
   },
   forgotPassword: {
     marginTop: 15,
@@ -172,6 +170,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   forgotPasswordText: {
+    fontFamily: "Roboto-Condesed-SemiBold",
     color: "#e1e1e1",
     fontSize: 14,
     textDecorationLine: "underline",
@@ -181,6 +180,9 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     alignSelf: "center",
-    marginBottom: 10,
+    marginBottom: 20,
+  },
+  buttonDisabled: {
+    backgroundColor: '#c8c8c8',
   },
 });
