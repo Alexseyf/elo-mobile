@@ -547,6 +547,7 @@ export default function DetalheAluno() {
               <TextInput
                 style={styles.searchInput}
                 placeholder="Buscar por nome..."
+                placeholderTextColor="#666"
                 value={searchQuery}
                 onChangeText={handleSearchChange}
                 autoCapitalize="none"

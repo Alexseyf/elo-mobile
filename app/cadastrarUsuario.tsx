@@ -178,8 +178,9 @@ export default function CadastrarUsuario() {
           <View style={globalStyles.userFormContainer}>
             <Text style={globalStyles.userFormLabel}>Nome Completo</Text>
             <TextInput 
-              style={[globalStyles.input, { color: '#333' }]}
+              style={[globalStyles.input]}
               placeholder="Digite o nome completo"
+              placeholderTextColor="#666"
               value={nome}
               onChangeText={setNome}
               maxLength={60}
@@ -188,8 +189,9 @@ export default function CadastrarUsuario() {
             
             <Text style={globalStyles.userFormLabel}>E-mail</Text>
             <TextInput 
-              style={[globalStyles.input, { color: '#333' }]}
+              style={[globalStyles.input]}
               placeholder="Digite o e-mail"
+              placeholderTextColor="#666"
               keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
@@ -199,8 +201,9 @@ export default function CadastrarUsuario() {
 
             <Text style={globalStyles.userFormLabel}>Telefone</Text>
             <TextInput 
-              style={[globalStyles.input, { color: '#333' }]}
+              style={[globalStyles.input]}
               placeholder="Digite o telefone"
+              placeholderTextColor="#666"
               keyboardType="phone-pad"
               value={telefone}
               onChangeText={setTelefone}

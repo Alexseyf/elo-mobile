@@ -9,11 +9,11 @@ import {
   ActivityIndicator,
   RefreshControl,
   Platform,
+  Modal,
 } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Picker } from "@react-native-picker/picker";
 import { formatarNome, formatarNomeTurma } from "./utils/formatText";
 import Colors from "./constants/colors";
 import config from "../config";
@@ -52,6 +52,7 @@ export default function ListaAlunosAtivos() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingTurmas, setLoadingTurmas] = useState(true);
+  const [filtroTurmaModalVisible, setFiltroTurmaModalVisible] = useState(false);
 
   const fetchAlunosAtivos = async () => {
     try {
@@ -155,7 +156,7 @@ export default function ListaAlunosAtivos() {
   };
 
   const filtrarAlunos = (listaAlunos: Aluno[], turmaId: number | null) => {
-    if (!turmaId) {
+    if (!turmaId || turmaId === -1) {
       setAlunosFiltrados(listaAlunos);
     } else {
       const filtrados = listaAlunos.filter(
@@ -166,8 +167,13 @@ export default function ListaAlunosAtivos() {
   };
 
   const handleChangeTurma = (value: number | null) => {
-    setTurmaSelecionada(value);
-    filtrarAlunos(alunos, value);
+    if (value === -1) {
+      setTurmaSelecionada(null);
+      filtrarAlunos(alunos, null);
+    } else {
+      setTurmaSelecionada(value);
+      filtrarAlunos(alunos, value);
+    }
   };
 
   useEffect(() => {
@@ -184,6 +190,20 @@ export default function ListaAlunosAtivos() {
     router.back();
   };
 
+  // Funções para o modal de filtro de turmas
+  const openFiltroTurmaModal = () => {
+    setFiltroTurmaModalVisible(true);
+  };
+
+  const closeFiltroTurmaModal = () => {
+    setFiltroTurmaModalVisible(false);
+  };
+
+  const selecionarTurma = (value: number | null) => {
+    handleChangeTurma(value);
+    closeFiltroTurmaModal();
+  };
+
   return (
     <View style={globalStyles.container}>
       <StatusBar hidden barStyle="light-content" />
@@ -198,109 +218,150 @@ export default function ListaAlunosAtivos() {
           <Text style={globalStyles.loadingText}>Carregando alunos...</Text>
         </View>
       ) : (
-        <ScrollView
-          style={globalStyles.scrollContent}
-          contentContainerStyle={globalStyles.scrollContentContainer}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={[Colors.blue_btn]}
-              tintColor="#fff"
-            />
-          }
-        >
+        <View style={{ flex: 1, position: 'relative' }}>
           {turmas.length > 0 && (
-            <View style={styles.filterContainer}>
+            <View style={[styles.filterContainer, { zIndex: 1000 }]}>
               <Text style={styles.filterLabel}>Filtrar por Turma:</Text>
-              <View style={styles.pickerContainer}>
-                <View style={styles.pickerWrapper}>
-                  <Picker
-                    selectedValue={turmaSelecionada}
-                    onValueChange={(itemValue) => handleChangeTurma(itemValue)}
-                    style={styles.pickerInput}
-                    dropdownIconColor="#333"
-                    mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
-                    prompt="Selecione uma turma"
-                  >
-                    <Picker.Item 
-                      label="Todas as turmas" 
-                      value={null} 
-                      color="#333" 
-                    />
-                    {turmas.map((turma) => (
-                      <Picker.Item
-                        key={turma.id}
-                        label={formatarNomeTurma(turma.nome ?? "")}
-                        value={turma.id}
-                        color="#333"
-                      />
-                    ))}
-                  </Picker>
-                </View>
-              </View>
+              <TouchableOpacity 
+                style={styles.filterButton}
+                onPress={openFiltroTurmaModal}
+              >
+                <Text style={styles.filterButtonText}>
+                  {turmaSelecionada !== null 
+                    ? turmas.find(t => t.id === turmaSelecionada)?.nome || 'Turma não encontrada' 
+                    : 'Todas as turmas'}
+                </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#333" />
+              </TouchableOpacity>
             </View>
           )}
 
-          {alunos.length === 0 ? (
-            <View style={globalStyles.emptyContainer}>
-              <MaterialIcons name="people" size={60} color="#fff" />
-              <Text style={globalStyles.emptyText}>
-                Nenhum aluno ativo encontrado
-              </Text>
-            </View>
-          ) : alunosFiltrados.length === 0 ? (
-            <View style={globalStyles.emptyContainer}>
-              <MaterialIcons name="filter-alt" size={60} color="#fff" />
-              <Text style={globalStyles.emptyText}>
-                Nenhum aluno encontrado nesta turma
-              </Text>
-            </View>
-          ) : (
-            <View>
-              {alunosFiltrados.map((aluno) => {
-                const turmaDoAluno = turmas.find((t) => t.id === aluno.turmaId);
-                return (
-                  <View key={aluno.id} style={styles.alunoCard}>
-                    <View style={styles.alunoInfo}>
-                      <View style={styles.alunoAvatar}>
-                        <Text style={styles.alunoAvatarText}>
-                          {aluno.nome?.charAt(0)}
-                        </Text>
+          <ScrollView
+            style={[globalStyles.scrollContent, { zIndex: 1 }]}
+            contentContainerStyle={globalStyles.scrollContentContainer}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[Colors.blue_btn]}
+                tintColor="#fff"
+              />
+            }
+          >
+            {alunos.length === 0 ? (
+              <View style={globalStyles.emptyContainer}>
+                <MaterialIcons name="people" size={60} color="#fff" />
+                <Text style={globalStyles.emptyText}>
+                  Nenhum aluno ativo encontrado
+                </Text>
+              </View>
+            ) : alunosFiltrados.length === 0 ? (
+              <View style={globalStyles.emptyContainer}>
+                <MaterialIcons name="filter-alt" size={60} color="#fff" />
+                <Text style={globalStyles.emptyText}>
+                  Nenhum aluno encontrado nesta turma
+                </Text>
+              </View>
+            ) : (
+              <View>
+                {alunosFiltrados.map((aluno) => {
+                  const turmaDoAluno = turmas.find((t) => t.id === aluno.turmaId);
+                  return (
+                    <View key={aluno.id} style={styles.alunoCard}>
+                      <View style={styles.alunoInfo}>
+                        <View style={styles.alunoAvatar}>
+                          <Text style={styles.alunoAvatarText}>
+                            {aluno.nome?.charAt(0)}
+                          </Text>
+                        </View>
+                        <View style={styles.alunoDetails}>
+                          <Text style={styles.alunoNome}>
+                            {formatarNome(aluno.nome)}
+                          </Text>
+                          <Text style={styles.alunoTurma}>
+                            {turmaDoAluno
+                              ? `Turma: ${formatarNomeTurma(turmaDoAluno.nome)}`
+                              : "Sem turma"}
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.editButton}
+                          onPress={() =>
+                            router.push({
+                              pathname: "/detalheAluno",
+                              params: { id: aluno.id.toString() },
+                            })
+                          }
+                        >
+                          <MaterialIcons name="edit" size={20} color="#fff" />
+                        </TouchableOpacity>
                       </View>
-                      <View style={styles.alunoDetails}>
-                        <Text style={styles.alunoNome}>
-                          {formatarNome(aluno.nome)}
-                        </Text>
-                        <Text style={styles.alunoTurma}>
-                          {turmaDoAluno
-                            ? `Turma: ${formatarNomeTurma(turmaDoAluno.nome)}`
-                            : "Sem turma"}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={styles.editButton}
-                        onPress={() =>
-                          router.push({
-                            pathname: "/detalheAluno",
-                            params: { id: aluno.id.toString() },
-                          })
-                        }
-                      >
-                        <MaterialIcons name="edit" size={20} color="#fff" />
-                      </TouchableOpacity>
                     </View>
-                  </View>
-                );
-              })}
-            </View>
-          )}
-        </ScrollView>
+                  );
+                })}
+              </View>
+            )}
+          </ScrollView>
+        </View>
       )}
 
       <TouchableOpacity style={globalStyles.backButton} onPress={handleVoltar}>
         <Text style={globalStyles.backButtonText}>Voltar</Text>
       </TouchableOpacity>
+
+      {/* Modal de filtro de turmas */}
+      <Modal
+        visible={filtroTurmaModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={closeFiltroTurmaModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.filtroModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Filtrar por Turma</Text>
+              <TouchableOpacity style={styles.closeButton} onPress={closeFiltroTurmaModal}>
+                <MaterialIcons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.turmaList}>
+              <TouchableOpacity 
+                style={[
+                  styles.turmaItem,
+                  turmaSelecionada === null && styles.turmaItemSelected
+                ]}
+                onPress={() => selecionarTurma(null)}
+              >
+                <MaterialIcons 
+                  name={turmaSelecionada === null ? "radio-button-checked" : "radio-button-unchecked"} 
+                  size={22} 
+                  color={turmaSelecionada === null ? Colors.blue_btn : "#666"} 
+                />
+                <Text style={styles.turmaText}>Todas as turmas</Text>
+              </TouchableOpacity>
+              
+              {turmas.map((turma) => (
+                <TouchableOpacity 
+                  key={turma.id}
+                  style={[
+                    styles.turmaItem,
+                    turmaSelecionada === turma.id && styles.turmaItemSelected
+                  ]}
+                  onPress={() => selecionarTurma(turma.id)}
+                >
+                  <MaterialIcons 
+                    name={turmaSelecionada === turma.id ? "radio-button-checked" : "radio-button-unchecked"} 
+                    size={22} 
+                    color={turmaSelecionada === turma.id ? Colors.blue_btn : "#666"} 
+                  />
+                  <Text style={styles.turmaText}>{formatarNomeTurma(turma.nome)}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -309,50 +370,94 @@ const styles = StyleSheet.create({
   filterContainer: {
     backgroundColor: "#ffffff",
     borderRadius: 8,
-    padding: 15,
-    marginBottom: 16,
+    padding: 12,
+    marginHorizontal: 15,
+    marginTop: 15,
+    marginBottom: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
+    zIndex: 1000,
+    ...(Platform.OS === 'android' && { 
+      elevation: 5,
+      marginBottom: 15
+    }),
   },
   filterLabel: {
     fontFamily: "Roboto_Condensed-SemiBold",
     fontSize: 16,
     color: "#333",
+    marginBottom: 5,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#e0e0e0',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 5,
+  },
+  filterButtonText: {
+    fontFamily: "Roboto_Condensed-Regular",
+    fontSize: 15,
+    color: '#333',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  filtroModalContent: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 15,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#f8f8f8",
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
     marginBottom: 10,
   },
-  pickerContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  pickerWrapper: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    ...Platform.select({
-      android: {
-        elevation: 0,
-        paddingHorizontal: 0,
-      }
-    }),
-  },
-  pickerInput: {
+  modalTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
+    fontSize: 20,
     color: "#333",
-    backgroundColor: "#fff",
+    flex: 1,
+  },
+  closeButton: {
+    padding: 5,
+  },
+  turmaList: {
+    marginBottom: 15,
+  },
+  turmaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  turmaItemSelected: {
+    backgroundColor: Colors.blue_btn + '20',
+  },
+  turmaText: {
     fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
-    height: 50,
-    width: '100%',
-    ...Platform.select({
-      android: {
-        color: "#333",
-      },
-    }),
+    color: '#333',
+    marginLeft: 10,
   },
   alunoCard: {
     backgroundColor: "#fff",

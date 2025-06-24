@@ -6,8 +6,8 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../../config';
 import DatePickerModal from '../components/DatePickerModal';
+import TimePickerModal from '../components/TimePickerModal';
 import Colors from '../constants/colors';
-import { Picker } from '@react-native-picker/picker';
 import { formatarNomeTurma } from '../utils/formatText';
 
 const TIPO_EVENTO = {
@@ -36,6 +36,10 @@ export default function CadastrarEvento() {
   const [diaTemp, setDiaTemp] = useState('');
   const [mesTemp, setMesTemp] = useState('');
   const [anoTemp, setAnoTemp] = useState('');
+  const [horaInicioModalVisible, setHoraInicioModalVisible] = useState(false);
+  const [horaFimModalVisible, setHoraFimModalVisible] = useState(false);
+  const [horaInicioTemp, setHoraInicioTemp] = useState('08');
+  const [horaFimTemp, setHoraFimTemp] = useState('09');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isProfessor, setIsProfessor] = useState<boolean>(false);
   const [professorId, setProfessorId] = useState<number | null>(null);
@@ -58,22 +62,7 @@ export default function CadastrarEvento() {
   ];
   const anoAtual = new Date().getFullYear();
   const anos = Array.from({ length: 20 }, (_, i) => (anoAtual - i).toString());
-
-  const horasDisponiveis = [
-    { valor: '07:00', label: '7:00' },
-    { valor: '08:00', label: '8:00' },
-    { valor: '09:00', label: '9:00' },
-    { valor: '10:00', label: '10:00' },
-    { valor: '11:00', label: '11:00' },
-    { valor: '12:00', label: '12:00' },
-    { valor: '13:00', label: '13:00' },
-    { valor: '14:00', label: '14:00' },
-    { valor: '15:00', label: '15:00' },
-    { valor: '16:00', label: '16:00' },
-    { valor: '17:00', label: '17:00' },
-    { valor: '18:00', label: '18:00' },
-    { valor: '19:00', label: '19:00' }
-  ];
+  const horas = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
 
   useEffect(() => {
     const inicializar = async () => {
@@ -461,6 +450,30 @@ export default function CadastrarEvento() {
     setModalVisible(false);
   };
 
+  const openHoraInicioPicker = () => {
+    const horaAtual = horaInicio ? horaInicio.split(':')[0] : '08';
+    setHoraInicioTemp(horaAtual);
+    setHoraInicioModalVisible(true);
+  };
+
+  const confirmHoraInicio = (hora: string) => {
+    setHoraInicioTemp(hora);
+    setHoraInicio(`${hora}:00`);
+    setHoraInicioModalVisible(false);
+  };
+
+  const openHoraFimPicker = () => {
+    const horaAtual = horaFim ? horaFim.split(':')[0] : '09';
+    setHoraFimTemp(horaAtual);
+    setHoraFimModalVisible(true);
+  };
+
+  const confirmHoraFim = (hora: string) => {
+    setHoraFimTemp(hora);
+    setHoraFim(`${hora}:00`);
+    setHoraFimModalVisible(false);
+  };
+
   return (
     <View style={globalStyles.container}>
       <StatusBar hidden barStyle="light-content" />
@@ -476,15 +489,17 @@ export default function CadastrarEvento() {
       ) : (
         <ScrollView contentContainerStyle={styles.formContainer} keyboardShouldPersistTaps="handled">
           <TextInput
-            style={[globalStyles.input, { color: '#333' }]}
+            style={[globalStyles.input]}
             placeholder="Título"
+            placeholderTextColor="#666"
             value={titulo}
             onChangeText={setTitulo}
             maxLength={100}
           />
           <TextInput
-            style={[globalStyles.input, { height: 80 }, { color: '#333' }]}
+            style={[globalStyles.input, { height: 80 }]}
             placeholder="Descrição (opcional)"
+            placeholderTextColor="#666"
             value={descricao}
             onChangeText={setDescricao}
             maxLength={500}
@@ -497,42 +512,24 @@ export default function CadastrarEvento() {
           </TouchableOpacity>
           
           <View style={styles.timeInputsContainer}>
-            <View style={[styles.timeInput, styles.pickerWrapper]}>
-              <Text style={globalStyles.formLabelLight}>Hora Início</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={horaInicio}
-                  onValueChange={(itemValue) => setHoraInicio(itemValue)}
-                  style={styles.pickerInput}
-                >
-                  {horasDisponiveis.map((hora) => (
-                    <Picker.Item
-                      key={hora.valor}
-                      label={hora.label}
-                      value={hora.valor}
-                    />
-                  ))}
-                </Picker>
-              </View>
-            </View>
-            <View style={[styles.timeInput, styles.pickerWrapper]}>
-              <Text style={globalStyles.formLabelLight}>Hora Fim</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={horaFim}
-                  onValueChange={(itemValue) => setHoraFim(itemValue)}
-                  style={styles.pickerInput}
-                >
-                  {horasDisponiveis.map((hora) => (
-                    <Picker.Item
-                      key={hora.valor}
-                      label={hora.label}
-                      value={hora.valor}
-                    />
-                  ))}
-                </Picker>
-              </View>
-            </View>
+            <TouchableOpacity 
+              style={[globalStyles.input, styles.timeInput, { justifyContent: 'center' }]} 
+              onPress={openHoraInicioPicker} 
+              activeOpacity={0.8}
+            >
+              <Text style={{ color: horaInicio ? '#222' : '#888', fontSize: 16, textAlignVertical: 'center', fontFamily: 'Roboto_Condensed-ExtraLight' }}>
+                {horaInicio || 'Hora Início (HH:MM)'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[globalStyles.input, styles.timeInput, { justifyContent: 'center' }]} 
+              onPress={openHoraFimPicker} 
+              activeOpacity={0.8}
+            >
+              <Text style={{ color: horaFim ? '#222' : '#888', fontSize: 16, textAlignVertical: 'center', fontFamily: 'Roboto_Condensed-ExtraLight' }}>
+                {horaFim || 'Hora Fim (HH:MM)'}
+              </Text>
+            </TouchableOpacity>
           </View>
           
           <DatePickerModal
@@ -549,6 +546,26 @@ export default function CadastrarEvento() {
             onCancel={() => setModalVisible(false)}
             onConfirm={confirmDate}
             title="Selecione a data"
+          />
+          
+          <TimePickerModal
+            visible={horaInicioModalVisible}
+            horas={horas}
+            horaTemp={horaInicioTemp}
+            setHoraTemp={setHoraInicioTemp}
+            onCancel={() => setHoraInicioModalVisible(false)}
+            onConfirm={confirmHoraInicio}
+            title="Selecione a hora de início"
+          />
+          
+          <TimePickerModal
+            visible={horaFimModalVisible}
+            horas={horas}
+            horaTemp={horaFimTemp}
+            setHoraTemp={setHoraFimTemp}
+            onCancel={() => setHoraFimModalVisible(false)}
+            onConfirm={confirmHoraFim}
+            title="Selecione a hora de término"
           />
           
           <View style={styles.pickerContainer}>
@@ -660,15 +677,5 @@ const styles = StyleSheet.create({
   },
   timeInput: {
     width: '48%',
-  },
-  pickerWrapper: {
-    padding: 0,
-    marginBottom: 10,
-  },
-  pickerInput: {
-    color: '#222',
-    fontFamily: 'Roboto_Condensed-Regular',
-    fontSize: 16,
-    width: '100%',
   }
 });

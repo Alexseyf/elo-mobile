@@ -195,8 +195,9 @@ export default function CadastrarAluno() {
           <View style={styles.formContainer}>
             <Text style={styles.formLabel}>Nome Completo</Text>
             <TextInput 
-              style={[globalStyles.input, { color: '#333' }]} 
+              style={[globalStyles.input]} 
               placeholder="Digite o nome completo do aluno"
+              placeholderTextColor="#666"
               value={nome}
               onChangeText={setNome}
               maxLength={60}

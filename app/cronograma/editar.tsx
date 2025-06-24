@@ -274,7 +274,7 @@ export default function EditarCronograma() {
     <View style={globalStyles.container}>
       <StatusBar hidden barStyle="light-content" />
       <View style={globalStyles.header}>
-        <Text style={globalStyles.headerTitle}>Editar Evento</Text>
+        <Text style={globalStyles.headerTitle}>Editar Evento do Cronograma Anual</Text>
       </View>
       
       {carregando ? (
@@ -287,6 +287,7 @@ export default function EditarCronograma() {
           <TextInput
             style={globalStyles.input}
             placeholder="Título"
+            placeholderTextColor="#666"
             value={titulo}
             onChangeText={setTitulo}
             maxLength={100}
@@ -294,6 +295,7 @@ export default function EditarCronograma() {
           <TextInput
             style={[globalStyles.input, { height: 80 }]}
             placeholder="Descrição (opcional)"
+            placeholderTextColor="#666"
             value={descricao}
             onChangeText={setDescricao}
             maxLength={500}

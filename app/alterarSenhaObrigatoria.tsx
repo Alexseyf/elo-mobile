@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   passwordInput: {
     fontFamily: "Roboto_Condensed-ExtraLight",
     flex: 1,
-    height: 48, // Altura consistente
+    height: 48,
     fontSize: 16,
     color: '#333',
   },

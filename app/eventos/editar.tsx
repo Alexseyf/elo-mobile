@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView, ActivityIndicator, StatusBar, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView, ActivityIndicator, StatusBar } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import globalStyles from '../../styles/globalStyles';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../../config';
 import DatePickerModal from '../components/DatePickerModal';
+import TimePickerModal from '../components/TimePickerModal';
 import Colors from '../constants/colors';
 import { formatarNomeTurma } from '../utils/formatText';
 
@@ -55,6 +56,10 @@ export default function EditarEvento() {
   const [diaTemp, setDiaTemp] = useState('');
   const [mesTemp, setMesTemp] = useState('');
   const [anoTemp, setAnoTemp] = useState('');
+  const [horaInicioModalVisible, setHoraInicioModalVisible] = useState(false);
+  const [horaFimModalVisible, setHoraFimModalVisible] = useState(false);
+  const [horaInicioTemp, setHoraInicioTemp] = useState('');
+  const [horaFimTemp, setHoraFimTemp] = useState('');
   const [carregando, setCarregando] = useState(true);
   const [eventoOriginal, setEventoOriginal] = useState<EventoItem | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -80,6 +85,7 @@ export default function EditarEvento() {
   ];
   const anoAtual = new Date().getFullYear();
   const anos = Array.from({ length: 20 }, (_, i) => (anoAtual - i).toString());
+  const horas = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
 
   useEffect(() => {
     verificarPermissoes();
@@ -343,6 +349,17 @@ export default function EditarEvento() {
         setHoraFim(evento.horaFim);
         setTipoEvento(evento.tipoEvento);
         setTurmaId(evento.turmaId);
+        
+        // Inicializa os valores temporários das horas
+        if (evento.horaInicio) {
+          const hora = evento.horaInicio.split(':')[0];
+          setHoraInicioTemp(hora);
+        }
+        
+        if (evento.horaFim) {
+          const hora = evento.horaFim.split(':')[0];
+          setHoraFimTemp(hora);
+        }
       } else if (response.status === 404) {
         Toast.show({ 
           type: 'error', 
@@ -404,6 +421,17 @@ export default function EditarEvento() {
       Toast.show({ type: 'error', text1: 'Hora de término inválida', text2: 'Formato: HH:MM', visibilityTime: 3000 });
       return false;
     }
+    
+    if (horaInicio >= horaFim) {
+      Toast.show({ 
+        type: 'error', 
+        text1: 'Horário inválido', 
+        text2: 'A hora de término deve ser posterior à hora de início', 
+        visibilityTime: 3000 
+      });
+      return false;
+    }
+    
     if (!turmaId) {
       Toast.show({ type: 'error', text1: 'Turma não selecionada', text2: 'Selecione uma turma', visibilityTime: 3000 });
       return false;
@@ -538,79 +566,6 @@ export default function EditarEvento() {
     }
   };
 
-  const handleExcluir = () => {
-    Alert.alert(
-      "Excluir Evento",
-      "Tem certeza que deseja excluir este evento?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Excluir", onPress: excluirEvento, style: "destructive" }
-      ]
-    );
-  };
-
-  const excluirEvento = async () => {
-    setIsLoading(true);
-    try {
-      const authToken = await AsyncStorage.getItem('@auth_token');
-      
-      if (!authToken) {
-        Toast.show({ type: 'error', text1: 'Erro de autenticação', text2: 'Usuário não autenticado', visibilityTime: 3000 });
-        setIsLoading(false);
-        return;
-      }
-
-      if (isProfessor && !isAdmin && turmasProfessor.length > 0) {
-        if (!turmasProfessor.includes(eventoOriginal?.turmaId!)) {
-          Toast.show({ 
-            type: 'error', 
-            text1: 'Permissão negada', 
-            text2: 'Você só pode excluir eventos de suas turmas', 
-            visibilityTime: 3000 
-          });
-          setIsLoading(false);
-          return;
-        }
-      }
-      
-      const response = await fetch(`${config.API_URL}/eventos/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-        },
-      });
-      
-      if (response.ok) {
-        Toast.show({ 
-          type: 'success', 
-          text1: 'Evento excluído com sucesso!', 
-          visibilityTime: 3000,
-          onHide: () => router.push('/eventos/listar')
-        });
-      } else if (response.status === 403) {
-        Toast.show({ 
-          type: 'error', 
-          text1: 'Permissão negada', 
-          text2: 'Você não tem permissão para excluir este evento', 
-          visibilityTime: 3000 
-        });
-      } else {
-        Toast.show({ 
-          type: 'error', 
-          text1: 'Erro ao excluir evento', 
-          text2: 'Tente novamente mais tarde', 
-          visibilityTime: 3000 
-        });
-      }
-    } catch (e) {
-      console.error('Erro ao excluir evento:', e);
-      Toast.show({ type: 'error', text1: 'Erro de conexão', text2: 'Tente novamente', visibilityTime: 3000 });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const openDatePicker = () => {
     setDiaTemp(data ? data.slice(8, 10) : dias[0]);
     setMesTemp(data ? data.slice(5, 7) : meses[0].valor);
@@ -621,6 +576,30 @@ export default function EditarEvento() {
   const confirmDate = () => {
     setData(`${anoTemp}-${mesTemp}-${diaTemp}`);
     setModalVisible(false);
+  };
+
+  const openHoraInicioPicker = () => {
+    const horaAtual = horaInicio ? horaInicio.split(':')[0] : '07';
+    setHoraInicioTemp(horaAtual);
+    setHoraInicioModalVisible(true);
+  };
+
+  const confirmHoraInicio = (hora: string) => {
+    setHoraInicioTemp(hora);
+    setHoraInicio(`${hora}:00`);
+    setHoraInicioModalVisible(false);
+  };
+
+  const openHoraFimPicker = () => {
+    const horaAtual = horaFim ? horaFim.split(':')[0] : '08';
+    setHoraFimTemp(horaAtual);
+    setHoraFimModalVisible(true);
+  };
+
+  const confirmHoraFim = (hora: string) => {
+    setHoraFimTemp(hora);
+    setHoraFim(`${hora}:00`);
+    setHoraFimModalVisible(false);
   };
 
   const fetchTurmasProfessor = async (id?: number) => {
@@ -650,6 +629,7 @@ export default function EditarEvento() {
           <TextInput
             style={globalStyles.input}
             placeholder="Título"
+            placeholderTextColor="#666"
             value={titulo}
             onChangeText={setTitulo}
             maxLength={100}
@@ -657,6 +637,7 @@ export default function EditarEvento() {
           <TextInput
             style={[globalStyles.input, { height: 80 }]}
             placeholder="Descrição (opcional)"
+            placeholderTextColor="#666"
             value={descricao}
             onChangeText={setDescricao}
             maxLength={500}
@@ -669,22 +650,24 @@ export default function EditarEvento() {
           </TouchableOpacity>
           
           <View style={styles.timeInputsContainer}>
-            <TextInput
-              style={[globalStyles.input, styles.timeInput]}
-              placeholder="Hora Início (HH:MM)"
-              value={horaInicio}
-              onChangeText={setHoraInicio}
-              maxLength={5}
-              keyboardType="numbers-and-punctuation"
-            />
-            <TextInput
-              style={[globalStyles.input, styles.timeInput]}
-              placeholder="Hora Fim (HH:MM)"
-              value={horaFim}
-              onChangeText={setHoraFim}
-              maxLength={5}
-              keyboardType="numbers-and-punctuation"
-            />
+            <TouchableOpacity 
+              style={[globalStyles.input, styles.timeInput, { justifyContent: 'center' }]} 
+              onPress={openHoraInicioPicker} 
+              activeOpacity={0.8}
+            >
+              <Text style={{ color: horaInicio ? '#222' : '#888', fontSize: 16, textAlignVertical: 'center', fontFamily: 'Roboto_Condensed-ExtraLight' }}>
+                {horaInicio || 'Hora Início (HH:MM)'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[globalStyles.input, styles.timeInput, { justifyContent: 'center' }]} 
+              onPress={openHoraFimPicker} 
+              activeOpacity={0.8}
+            >
+              <Text style={{ color: horaFim ? '#222' : '#888', fontSize: 16, textAlignVertical: 'center', fontFamily: 'Roboto_Condensed-ExtraLight' }}>
+                {horaFim || 'Hora Fim (HH:MM)'}
+              </Text>
+            </TouchableOpacity>
           </View>
           
           <DatePickerModal
@@ -701,6 +684,26 @@ export default function EditarEvento() {
             onCancel={() => setModalVisible(false)}
             onConfirm={confirmDate}
             title="Selecione a data"
+          />
+          
+          <TimePickerModal
+            visible={horaInicioModalVisible}
+            horas={horas}
+            horaTemp={horaInicioTemp}
+            setHoraTemp={setHoraInicioTemp}
+            onCancel={() => setHoraInicioModalVisible(false)}
+            onConfirm={confirmHoraInicio}
+            title="Selecione a hora de início"
+          />
+          
+          <TimePickerModal
+            visible={horaFimModalVisible}
+            horas={horas}
+            horaTemp={horaFimTemp}
+            setHoraTemp={setHoraFimTemp}
+            onCancel={() => setHoraFimModalVisible(false)}
+            onConfirm={confirmHoraFim}
+            title="Selecione a hora de término"
           />
           
           <View style={styles.pickerContainer}>
@@ -753,12 +756,6 @@ export default function EditarEvento() {
             <TouchableOpacity style={globalStyles.submitButtonAlt} onPress={handleSubmit} disabled={isLoading}>
               {isLoading ? <ActivityIndicator color={Colors.blue_btn} /> : <Text style={globalStyles.submitButtonAltText}>Salvar Alterações</Text>}
             </TouchableOpacity>
-            
-            {(userRole === 'ADMIN' || userRole === 'PROFESSOR') && (
-              <TouchableOpacity style={styles.deleteButton} onPress={handleExcluir} disabled={isLoading}>
-                {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.deleteButtonText}>Excluir Evento</Text>}
-              </TouchableOpacity>
-            )}
           </View>
         </ScrollView>
       )}
@@ -818,18 +815,5 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginTop: 10,
-  },
-  deleteButton: {
-    backgroundColor: '#e53935',
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  deleteButtonText: {
-    color: '#fff',
-    fontFamily: 'Roboto_Condensed-SemiBold',
-    fontSize: 16,
   }
 });

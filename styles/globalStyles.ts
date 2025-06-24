@@ -286,7 +286,7 @@ export const globalStyles = StyleSheet.create({
     
     // Botão branco para uso em fundos azuis
     submitButtonAlt: {
-      backgroundColor: "rgba(255, 255, 255, 0.9)",
+      backgroundColor: Colors.light_green_btn,
       marginTop: 30,
       padding: 15,
       borderRadius: 8,
@@ -301,7 +301,7 @@ export const globalStyles = StyleSheet.create({
       fontFamily: "Roboto_Condensed-SemiBold",
       fontSize: 16,
       fontWeight: "600",
-      color: Colors.blue_btn,
+      color: Colors.white,
     },
 
   // Estilos para títulos e textos

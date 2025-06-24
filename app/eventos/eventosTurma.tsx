@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import globalStyles from '../../styles/globalStyles';
@@ -68,6 +67,8 @@ export default function EventosTurma() {
   const [userType, setUserType] = useState<string>("readonly");
   const [alunosDoResponsavel, setAlunosDoResponsavel] = useState<Aluno[]>([]);
   const [alunoSelecionadoId, setAlunoSelecionadoId] = useState<number | null>(null);
+  const [filtroAlunoModalVisible, setFiltroAlunoModalVisible] = useState(false);
+  const [filtroMesModalVisible, setFiltroMesModalVisible] = useState(false);
   
   const meses = [
     { valor: 0, texto: 'Janeiro' },
@@ -337,10 +338,28 @@ export default function EventosTurma() {
 
   const handleChangeMes = (mes: number | null) => {
     setMesSelecionado(mes);
+    setFiltroMesModalVisible(false);
   };
 
   const handleChangeAluno = (id: number | null) => {
     setAlunoSelecionadoId(id);
+    setFiltroAlunoModalVisible(false);
+  };
+
+  const abrirFiltroAlunoModal = () => {
+    setFiltroAlunoModalVisible(true);
+  };
+
+  const fecharFiltroAlunoModal = () => {
+    setFiltroAlunoModalVisible(false);
+  };
+
+  const abrirFiltroMesModal = () => {
+    setFiltroMesModalVisible(true);
+  };
+
+  const fecharFiltroMesModal = () => {
+    setFiltroMesModalVisible(false);
   };
 
   const formatarData = (dataString: string) => {
@@ -441,54 +460,31 @@ export default function EventosTurma() {
             {alunosDoResponsavel.length > 1 && (
               <View style={styles.filterRow}>
                 <Text style={styles.filterLabel}>Aluno:</Text>
-                <View style={styles.pickerWrapper}>
-                  <Picker
-                    selectedValue={alunoSelecionadoId}
-                    style={styles.pickerInput}
-                    onValueChange={(itemValue) => handleChangeAluno(itemValue)}
-                    dropdownIconColor="#333"
-                    mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
-                    prompt="Selecione um aluno"
-                  >
-                    {alunosDoResponsavel.map((aluno) => (
-                      <Picker.Item
-                        key={aluno.id}
-                        label={aluno.nome ? aluno.nome.split(' ')[0] : `Aluno ${aluno.id}`}
-                        value={aluno.id}
-                        color="#333"
-                      />
-                    ))}
-                  </Picker>
-                </View>
+                <TouchableOpacity 
+                  style={styles.filterButton}
+                  onPress={abrirFiltroAlunoModal}
+                >
+                  <Text style={styles.filterButtonText}>
+                    {alunoSelecionadoId !== null 
+                      ? alunosDoResponsavel.find(a => a.id === alunoSelecionadoId)?.nome.split(' ')[0] || `Aluno ${alunoSelecionadoId}` 
+                      : 'Selecione um aluno'}
+                  </Text>
+                  <MaterialIcons name="arrow-drop-down" size={24} color="#333" />
+                </TouchableOpacity>
               </View>
             )}
             
             <View style={styles.filterRow}>
               <Text style={styles.filterLabel}>Mês:</Text>
-              <View style={styles.pickerWrapper}>
-                <Picker
-                  selectedValue={mesSelecionado}
-                  style={styles.pickerInput}
-                  onValueChange={(itemValue) => handleChangeMes(itemValue)}
-                  dropdownIconColor="#333"
-                  mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
-                  prompt="Selecione um mês"
-                >
-                  <Picker.Item 
-                    label="Todos os meses" 
-                    value={null} 
-                    color="#333"
-                  />
-                  {meses.map((mes) => (
-                    <Picker.Item
-                      key={mes.valor}
-                      label={mes.texto}
-                      value={mes.valor}
-                      color="#333"
-                    />
-                  ))}
-                </Picker>
-              </View>
+              <TouchableOpacity 
+                style={styles.filterButton}
+                onPress={abrirFiltroMesModal}
+              >
+                <Text style={styles.filterButtonText}>
+                  {mesSelecionado !== null ? meses[mesSelecionado].texto : 'Todos os meses'}
+                </Text>
+                <MaterialIcons name="arrow-drop-down" size={24} color="#333" />
+              </TouchableOpacity>
             </View>
           </View>
           
@@ -584,6 +580,99 @@ export default function EventosTurma() {
           </View>
         </View>
       </Modal>
+      
+      {/* Modal de filtro de alunos */}
+      <Modal
+        visible={filtroAlunoModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={fecharFiltroAlunoModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.filtroModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Selecionar Aluno</Text>
+              <TouchableOpacity style={styles.closeButton} onPress={fecharFiltroAlunoModal}>
+                <MaterialIcons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.monthList}>
+              {alunosDoResponsavel.map((aluno) => (
+                <TouchableOpacity 
+                  key={aluno.id}
+                  style={[
+                    styles.monthItem,
+                    alunoSelecionadoId === aluno.id && styles.monthItemSelected
+                  ]}
+                  onPress={() => handleChangeAluno(aluno.id)}
+                >
+                  <MaterialIcons 
+                    name={alunoSelecionadoId === aluno.id ? "radio-button-checked" : "radio-button-unchecked"} 
+                    size={22} 
+                    color={alunoSelecionadoId === aluno.id ? Colors.blue_btn : "#666"} 
+                  />
+                  <Text style={styles.monthText}>{aluno.nome ? aluno.nome.split(' ')[0] : `Aluno ${aluno.id}`}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+      
+      {/* Modal de filtro de meses */}
+      <Modal
+        visible={filtroMesModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={fecharFiltroMesModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.filtroModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Filtrar por Mês</Text>
+              <TouchableOpacity style={styles.closeButton} onPress={fecharFiltroMesModal}>
+                <MaterialIcons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.monthList}>
+              <TouchableOpacity 
+                style={[
+                  styles.monthItem,
+                  mesSelecionado === null && styles.monthItemSelected
+                ]}
+                onPress={() => handleChangeMes(null)}
+              >
+                <MaterialIcons 
+                  name={mesSelecionado === null ? "radio-button-checked" : "radio-button-unchecked"} 
+                  size={22} 
+                  color={mesSelecionado === null ? Colors.blue_btn : "#666"} 
+                />
+                <Text style={styles.monthText}>Todos os meses</Text>
+              </TouchableOpacity>
+              
+              {meses.map((mes) => (
+                <TouchableOpacity 
+                  key={mes.valor}
+                  style={[
+                    styles.monthItem,
+                    mesSelecionado === mes.valor && styles.monthItemSelected
+                  ]}
+                  onPress={() => handleChangeMes(mes.valor)}
+                >
+                  <MaterialIcons 
+                    name={mesSelecionado === mes.valor ? "radio-button-checked" : "radio-button-unchecked"} 
+                    size={22} 
+                    color={mesSelecionado === mes.valor ? Colors.blue_btn : "#666"} 
+                  />
+                  <Text style={styles.monthText}>{mes.texto}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
             <TouchableOpacity style={globalStyles.backButton} onPress={() => router.back()}>
               <Text style={globalStyles.backButtonText}>Voltar</Text>
             </TouchableOpacity>
@@ -612,41 +701,53 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 5,
   },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  pickerWrapper: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    overflow: 'hidden',
-    ...Platform.select({
-      android: {
-        elevation: 0,
-        paddingHorizontal: 0,
-      }
-    }),
-  },
-  pickerInput: {
-    height: 50,
+  filterButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: '#fff',
-    color: "#333",
+    borderColor: '#e0e0e0',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  filterButtonText: {
+    fontFamily: "Roboto_Condensed-Regular",
+    fontSize: 15,
+    color: '#333',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  filtroModalContent: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 15,
+    maxHeight: '80%',
+  },
+  monthList: {
+    marginBottom: 15,
+  },
+  monthItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  monthItemSelected: {
+    backgroundColor: Colors.blue_btn + '20',
+  },
+  monthText: {
     fontFamily: "Roboto_Condensed-Regular",
     fontSize: 16,
-    width: '100%',
-    ...Platform.select({
-      android: {
-        color: "#333",
-      },
-    }),
-  },
-  picker: {
-    height: 50,
-    backgroundColor: '#f9f9f9',
+    color: '#333',
+    marginLeft: 10,
   },
   eventoInfo: {
     flexDirection: 'row',

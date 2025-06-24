@@ -161,19 +161,21 @@ export default function CadastrarCronograma() {
     <View style={globalStyles.container}>
       <StatusBar hidden barStyle="light-content" />
       <View style={globalStyles.header}>
-        <Text style={globalStyles.headerTitle}>Cadastrar Cronograma</Text>
+        <Text style={globalStyles.headerTitle}>Cadastrar Evento do Cronograma Anual</Text>
       </View>
       <ScrollView contentContainerStyle={styles.formContainer} keyboardShouldPersistTaps="handled">
         <TextInput
-          style={[globalStyles.input, { color: '#333' }]}
+          style={[globalStyles.input]}
           placeholder="Título"
+          placeholderTextColor="#666"
           value={titulo}
           onChangeText={setTitulo}
           maxLength={100}
         />
         <TextInput
-          style={[globalStyles.input, { height: 80 }, { color: '#333' }]}
+          style={[globalStyles.input, { height: 80 }]}
           placeholder="Descrição (opcional)"
+          placeholderTextColor="#666"
           value={descricao}
           onChangeText={setDescricao}
           maxLength={500}
