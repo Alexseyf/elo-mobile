@@ -33,6 +33,7 @@ interface Aluno {
   nome: string;
   dataNasc: string;
   isAtivo: boolean;
+  mensalidade?: number;
   createdAt: string;
   updatedAt: string;
   turmaId: number;
@@ -390,6 +391,15 @@ export default function DetalheAluno() {
     return data.toLocaleDateString('pt-BR');
   };
 
+  const formatarMoeda = (valor?: number) => {
+    if (valor === undefined || valor === null) return '';
+    return valor.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2
+    });
+  };
+
   const handleVoltar = () => {
     router.back();
   };
@@ -447,6 +457,15 @@ export default function DetalheAluno() {
                   {aluno.isAtivo ? 'Ativo' : 'Inativo'}
                 </Text>
               </View>
+              {aluno.mensalidade !== undefined && aluno.mensalidade !== null && (
+                <View style={styles.infoItemColumn}>
+                  <View style={styles.infoLabelRow}>
+                    <MaterialIcons name="payment" size={20} color={Colors.blue_btn} />
+                    <Text style={styles.infoLabel}>Mensalidade:</Text>
+                  </View>
+                  <Text style={styles.infoValueColumn}>{formatarMoeda(aluno.mensalidade)}</Text>
+                </View>
+              )}
               <View style={styles.infoItemColumn}>
                 <View style={styles.infoLabelRow}>
                   <MaterialIcons name="calendar-today" size={20} color={Colors.blue_btn} />
