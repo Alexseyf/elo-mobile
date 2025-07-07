@@ -9,6 +9,7 @@ interface TimeSelectorProps {
   label: string;
   minHour?: number; 
   minMinute?: number;
+  theme?: 'light' | 'dark';
 }
 
 const TimeSelector: React.FC<TimeSelectorProps> = ({
@@ -18,7 +19,8 @@ const TimeSelector: React.FC<TimeSelectorProps> = ({
   onMinuteChange,
   label,
   minHour,
-  minMinute
+  minMinute,
+  theme = 'dark',
 }) => {
   
   const hours = Array.from({ length: 13 }, (_, i) => i + 7);
@@ -39,10 +41,10 @@ const TimeSelector: React.FC<TimeSelectorProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, theme === 'light' && styles.labelLight]}>{label}</Text>
       <View style={styles.timePickerContainer}>
         <View style={styles.pickerColumn}>
-          <Text style={styles.pickerLabel}>Hora</Text>
+          <Text style={[styles.pickerLabel, theme === 'light' && styles.pickerLabelLight]}>Hora</Text>
           <ScrollView 
             style={styles.picker} 
             showsVerticalScrollIndicator={true}
@@ -66,7 +68,9 @@ const TimeSelector: React.FC<TimeSelectorProps> = ({
                     <Text 
                       style={[
                         styles.pickerItemText,
+                        theme === 'light' && styles.pickerItemTextLight,
                         hour === h && styles.selectedPickerItemText,
+                        theme === 'light' && hour === h && styles.selectedPickerItemTextLight,
                         disabled && styles.disabledPickerItemText
                       ]}
                     >
@@ -79,10 +83,10 @@ const TimeSelector: React.FC<TimeSelectorProps> = ({
           </ScrollView>
         </View>
         
-        <Text style={styles.timeSeparator}>:</Text>
+        <Text style={[styles.timeSeparator, theme === 'light' && styles.timeSeparatorLight]}>:</Text>
         
         <View style={styles.pickerColumn}>
-          <Text style={styles.pickerLabel}>Minuto</Text>
+          <Text style={[styles.pickerLabel, theme === 'light' && styles.pickerLabelLight]}>Minuto</Text>
           <ScrollView 
             style={styles.picker} 
             showsVerticalScrollIndicator={true}
@@ -106,7 +110,9 @@ const TimeSelector: React.FC<TimeSelectorProps> = ({
                     <Text 
                       style={[
                         styles.pickerItemText,
+                        theme === 'light' && styles.pickerItemTextLight,
                         minute === m && styles.selectedPickerItemText,
+                        theme === 'light' && minute === m && styles.selectedPickerItemTextLight,
                         disabled && styles.disabledPickerItemText
                       ]}
                     >
@@ -132,6 +138,9 @@ const styles = StyleSheet.create({
     color: '#e1e1e1',
     marginBottom: 8,
   },
+  labelLight: {
+    color: '#222',
+  },
   timePickerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -141,7 +150,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   pickerColumn: {
-    width: 80,
+    width: 110,
   },
   pickerLabel: {
     fontSize: 14,
@@ -149,9 +158,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
   },
+  pickerLabelLight: {
+    color: '#222',
+  },
   picker: {
     height: 120,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: 'rgba(236, 229, 229, 0.1)',
     borderRadius: 5,
   },
   scrollContent: {
@@ -162,15 +174,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  selectedPickerItem: {
-    backgroundColor: 'rgba(74, 144, 226, 0.3)',
-    borderRadius: 5,
-  },
   pickerItemText: {
     fontSize: 18,
     color: '#e1e1e1',
   },
+  pickerItemTextLight: {
+    color: '#222',
+  },
+  selectedPickerItem: {
+    backgroundColor: 'rgba(74, 144, 226, 0.3)',
+    borderRadius: 5,
+  },
   selectedPickerItemText: {
+    color: '#4a90e2',
+    fontWeight: 'bold',
+  },
+  selectedPickerItemTextLight: {
     color: '#4a90e2',
     fontWeight: 'bold',
   },
@@ -180,6 +199,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontWeight: 'bold',
     marginTop: 20,
+  },
+  timeSeparatorLight: {
+    color: '#222',
   },
   disabledPickerItem: {
     opacity: 0.3,

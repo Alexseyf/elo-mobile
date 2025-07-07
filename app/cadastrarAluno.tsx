@@ -16,6 +16,7 @@ export default function CadastrarAluno() {
   const [nome, setNome] = useState("");
   const [dataNasc, setDataNasc] = useState(new Date());
   const [turmaId, setTurmaId] = useState<number | null>(null);
+  const [mensalidade, setMensalidade] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loadingTurmas, setLoadingTurmas] = useState(true);
@@ -146,6 +147,7 @@ export default function CadastrarAluno() {
         nome: formatarNome(nome.trim()),
         dataNasc: dataNasc.toISOString(),
         turmaId: turmaId,
+        mensalidade: mensalidade ? parseFloat(mensalidade) : undefined,
       };
 
       const response = await fetch(`${config.API_URL}/alunos`, {
@@ -211,6 +213,16 @@ export default function CadastrarAluno() {
             >
               <Text style={styles.dateText}>{formatDate(dataNasc)}</Text>
             </TouchableOpacity>
+            
+            <Text style={styles.formLabel}>Mensalidade (R$)</Text>
+            <TextInput 
+              style={[globalStyles.input]} 
+              placeholder="Digite o valor da mensalidade"
+              placeholderTextColor="#666"
+              value={mensalidade}
+              onChangeText={(text) => setMensalidade(text.replace(/[^0-9.,]/g, ''))}
+              keyboardType="numeric"
+            />
             
             <Text style={styles.formLabel}>Turma</Text>
             {loadingTurmas ? (

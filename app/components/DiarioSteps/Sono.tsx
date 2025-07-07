@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import TimeSelector from './TimeSelector';
 import Colors from '../../constants/colors';
@@ -157,6 +158,40 @@ const Sono: React.FC<SonoProps> = ({ value, onChange }) => {
            period.sleepMinute === period.wakeMinute;
   };
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newSleepHour, setNewSleepHour] = useState(7);
+  const [newSleepMinute, setNewSleepMinute] = useState(0);
+  const [newWakeHour, setNewWakeHour] = useState(7);
+  const [newWakeMinute, setNewWakeMinute] = useState(15);
+
+  const openAddModal = () => {
+    setNewSleepHour(7);
+    setNewSleepMinute(0);
+    setNewWakeHour(7);
+    setNewWakeMinute(15);
+    setModalVisible(true);
+  };
+
+  const closeAddModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleAddPeriod = () => {
+    const newPeriod: SleepPeriod = {
+      id: generateId(),
+      sleepHour: newSleepHour,
+      sleepMinute: newSleepMinute,
+      wakeHour: newWakeHour,
+      wakeMinute: newWakeMinute,
+      saved: true,
+      horaDormiu: formatTimeString(newSleepHour, newSleepMinute),
+      horaAcordou: formatTimeString(newWakeHour, newWakeMinute),
+      tempoTotal: calculateTotalTimeString(newSleepHour, newSleepMinute, newWakeHour, newWakeMinute)
+    };
+    onChange([...value, newPeriod]);
+    setModalVisible(false);
+  };
+
   return (
     <ScrollView style={styles.container} nestedScrollEnabled={true}>
       {value.length === 0 && (
@@ -203,23 +238,6 @@ const Sono: React.FC<SonoProps> = ({ value, onChange }) => {
                 </TouchableOpacity>
               </View>
 
-              <TimeSelector 
-                label="Dormiu às:"
-                hour={period.sleepHour}
-                minute={period.sleepMinute}
-                onHourChange={(hour) => updateSleepPeriod(period.id, 'sleepHour', hour)}
-                onMinuteChange={(minute) => updateSleepPeriod(period.id, 'sleepMinute', minute)}
-              />
-              
-              <TimeSelector 
-                label="Acordou às:"
-                hour={period.wakeHour}
-                minute={period.wakeMinute}
-                onHourChange={(hour) => updateSleepPeriod(period.id, 'wakeHour', hour)}
-                onMinuteChange={(minute) => updateSleepPeriod(period.id, 'wakeMinute', minute)}
-                minHour={period.sleepHour}
-                minMinute={period.sleepMinute}
-              />
               
               {isTimesEqual(period) && (
                 <Text style={styles.warningText}>
@@ -266,11 +284,50 @@ const Sono: React.FC<SonoProps> = ({ value, onChange }) => {
 
       <TouchableOpacity 
         style={styles.addButton}
-        onPress={addSleepPeriod}
+        onPress={openAddModal}
       >
         <MaterialIcons name="add" size={24} color="#fff" />
         <Text style={styles.addButtonText}>Adicionar período de sono</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={closeAddModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Novo período de sono</Text>
+            <TimeSelector
+              label="Dormiu às:"
+              hour={newSleepHour}
+              minute={newSleepMinute}
+              onHourChange={setNewSleepHour}
+              onMinuteChange={setNewSleepMinute}
+              theme="light"
+            />
+            <TimeSelector
+              label="Acordou às:"
+              hour={newWakeHour}
+              minute={newWakeMinute}
+              onHourChange={setNewWakeHour}
+              onMinuteChange={setNewWakeMinute}
+              minHour={newSleepHour}
+              minMinute={newSleepMinute}
+              theme="light"
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity onPress={closeAddModal} style={[styles.modalButton, styles.modalCancelButton]}>
+                <Text style={styles.modalCancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleAddPeriod} style={[styles.modalButton, styles.modalConfirmButton]}>
+                <Text style={styles.modalConfirmButtonText}>Salvar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -441,6 +498,57 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 8,
     fontFamily: 'Roboto_Condensed-SemiBold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    width: '90%',
+    maxHeight: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontFamily: "Roboto_Condensed-SemiBold",
+    fontSize: 18,
+    marginBottom: 15,
+    textAlign: 'center',
+    color: '#222',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  modalButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  modalCancelButton: {
+    backgroundColor: '#f0f0f0',
+  },
+  modalConfirmButton: {
+    backgroundColor: '#4a90e2',
+  },
+  modalCancelButtonText: {
+    fontFamily: "Roboto_Condensed-Regular",
+    color: '#333',
+  },
+  modalConfirmButtonText: {
+    color: 'white',
+    fontFamily: "Roboto_Condensed-SemiBold",
   },
 });
 
